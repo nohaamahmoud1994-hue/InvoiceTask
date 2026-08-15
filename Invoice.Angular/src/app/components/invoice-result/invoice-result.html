@@ -1,0 +1,65 @@
+<div class="mt-4">
+
+  @if (result) {
+
+  @if (result.isValid) {
+
+  <div class="alert alert-success">
+
+    <h5>
+      Invoice is Valid ✔
+    </h5>
+
+    <hr>
+
+    <p>
+      <strong>Total Sales:</strong>
+      {{ result.totalSalesAmount }}
+    </p>
+
+    <p>
+      <strong>Total Discount:</strong>
+      {{ result.totalDiscountAmount }}
+    </p>
+
+    <p>
+      <strong>Net Amount:</strong>
+      {{ result.netAmount }}
+    </p>
+
+    <p>
+      <strong>Total Amount:</strong>
+      {{ result.totalAmount }}
+    </p>
+
+  </div>
+
+  }
+
+  @else {
+
+  <div class="alert alert-danger">
+
+    <h5>
+      Validation Errors
+    </h5>
+
+    <ul>
+
+      @for (error of result.errors; track $index) {
+
+      <li>
+        {{ error }}
+      </li>
+
+      }
+
+    </ul>
+
+  </div>
+
+  }
+
+  }
+
+</div>

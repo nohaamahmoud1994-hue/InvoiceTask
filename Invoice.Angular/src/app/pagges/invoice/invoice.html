@@ -1,0 +1,95 @@
+<div class="container pb-5">
+
+  <header class="mb-4">
+    <h3 class="text-primary fw-bold">
+      Invoice Validation
+    </h3>
+  </header>
+
+  <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()">
+
+    <!-- ================= TABS ================= -->
+    <ul class="nav nav-tabs mb-4">
+      <li class="nav-item">
+        <button type="button"
+                class="nav-link"
+                [class.active]="activeTab === 'invoice-info'"
+                (click)="activeTab = 'invoice-info'">
+          Invoice Info
+        </button>
+      </li>
+
+      <li class="nav-item">
+        <button type="button"
+                class="nav-link"
+                [class.active]="activeTab === 'issuer'"
+                (click)="activeTab = 'issuer'">
+          Issuer
+        </button>
+      </li>
+
+      <li class="nav-item">
+        <button type="button"
+                class="nav-link"
+                [class.active]="activeTab === 'receiver'"
+                (click)="activeTab = 'receiver'">
+          Receiver
+        </button>
+      </li>
+
+      <li class="nav-item">
+        <button type="button"
+                class="nav-link"
+                [class.active]="activeTab === 'lines'"
+                (click)="activeTab = 'lines'">
+          Invoice Lines
+        </button>
+      </li>
+    </ul>
+
+    <!-- ================= CONTENT ================= -->
+    <div class="tab-content mb-4">
+
+      @if (activeTab === 'invoice-info') {
+      <div class="tab-pane active show">
+        <app-invoice-info [form]="invoiceForm"></app-invoice-info>
+      </div>
+      }
+
+      @if (activeTab === 'issuer') {
+      <div class="tab-pane active show">
+        <app-issuer [form]="invoiceForm"></app-issuer>
+      </div>
+      }
+
+      @if (activeTab === 'receiver') {
+      <div class="tab-pane active show">
+        <app-receiver [form]="invoiceForm"></app-receiver>
+      </div>
+      }
+
+      @if (activeTab === 'lines') {
+      <div class="tab-pane active show">
+        <app-invoice-line [form]="invoiceForm"></app-invoice-line>
+      </div>
+      }
+
+    </div>
+
+    <!-- ================= ACTION BUTTONS ================= -->
+    <div class="d-flex justify-content-end align-items-center pt-3 border-top">
+      <button type="submit" class="btn btn-primary px-4 py-2">
+        Validate Invoice
+      </button>
+    </div>
+
+  </form>
+
+  <!-- ================= VALIDATION RESULT ================= -->
+  @if (validationResult !== null) {
+  <div class="mt-4 pt-2">
+    <app-invoice-result [result]="validationResult"></app-invoice-result>
+  </div>
+  }
+
+</div>

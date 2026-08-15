@@ -1,0 +1,114 @@
+﻿@model Invoice.Core.Models.Invoices
+
+<div class="section-header mb-3">
+    <h5 class="text-primary fw-bold">Issuer Information</h5>
+    <hr />
+</div>
+
+<div class="row g-3">
+
+    <div class="col-md-4">
+
+        <label asp-for="Issuer.Type"></label>
+
+        <select asp-for="Issuer.Type" class="form-select">
+            <option value="">-- Select Type --</option>
+            <option value="B">Business (B)</option>
+            <option value="P">Natural Person (P)</option>
+            <option value="F">Foreigner (F)</option>
+        </select>
+
+        <span asp-validation-for="Issuer.Type" class="text-danger"></span>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <label asp-for="Issuer.Id"></label>
+
+        <input asp-for="Issuer.Id" class="form-control" />
+
+        <span asp-validation-for="Issuer.Id" class="text-danger"></span>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <label asp-for="Issuer.Name"></label>
+
+        <input asp-for="Issuer.Name" class="form-control" />
+
+        <span asp-validation-for="Issuer.Name" class="text-danger"></span>
+
+    </div>
+
+</div>
+
+<div class="section-header mt-4 mb-3">
+    <h5 class="text-primary fw-bold">Address</h5>
+    <hr />
+</div>
+
+<div class="row g-3">
+
+    <div class="col-md-3">
+
+        <label asp-for="Issuer.Address.BranchId"></label>
+
+        <input asp-for="Issuer.Address.BranchId" class="form-control" />
+
+        <span asp-validation-for="Issuer.Address.BranchId" class="text-danger"></span>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <label asp-for="Issuer.Address.Country"></label>
+
+        <input asp-for="Issuer.Address.Country" class="form-control" />
+
+        <span asp-validation-for="Issuer.Address.Country" class="text-danger"></span>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <label asp-for="Issuer.Address.Governate"></label>
+
+        <input asp-for="Issuer.Address.Governate" class="form-control" />
+
+        <span asp-validation-for="Issuer.Address.Governate" class="text-danger"></span>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <label asp-for="Issuer.Address.RegionCity"></label>
+
+        <input asp-for="Issuer.Address.RegionCity" class="form-control" />
+
+        <span asp-validation-for="Issuer.Address.RegionCity" class="text-danger"></span>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <label asp-for="Issuer.Address.Street"></label>
+
+        <input asp-for="Issuer.Address.Street" class="form-control" />
+
+        <span asp-validation-for="Issuer.Address.Street" class="text-danger"></span>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <label asp-for="Issuer.Address.BuildingNumber"></label>
+
+        <input asp-for="Issuer.Address.BuildingNumber" class="form-control" />
+
+        <span asp-validation-for="Issuer.Address.BuildingNumber" class="text-danger"></span>
+
+    </div>
+
+</div>

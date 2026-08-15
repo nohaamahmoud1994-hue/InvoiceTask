@@ -1,0 +1,440 @@
+<div [formGroup]="form">
+
+  <div class="container mt-4">
+
+    <h3 class="text-primary mb-4">
+      Invoice Lines
+    </h3>
+
+    <!-- Invoice Lines -->
+    <div formArrayName="invoiceLines">
+
+      @for (line of invoiceLines.controls; track $index) {
+
+      <div class="invoice-line border rounded p-3 mb-4 bg-light"
+           [formGroupName]="$index">
+
+        <!-- ================= BASIC INFO ================= -->
+
+        <div class="row">
+
+          <!-- Description -->
+          <div class="col-md-6 mb-3">
+
+            <label class="form-label fw-semibold">
+              Description
+            </label>
+
+            <input type="text"
+                   class="form-control"
+                   formControlName="description">
+
+            @if (line.get('description')?.invalid &&
+            line.get('description')?.touched) {
+
+            <small class="text-danger">
+              Description is required.
+            </small>
+
+            }
+
+          </div>
+
+
+          <!-- Item Type -->
+          <div class="col-md-3 mb-3">
+
+            <label class="form-label fw-semibold">
+              Item Type
+            </label>
+
+            <select class="form-select"
+                    formControlName="itemType">
+
+              <option value="EGS">
+                EGS
+              </option>
+
+              <option value="GS1">
+                GS1
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- Item Code -->
+          <div class="col-md-3 mb-3">
+
+            <label class="form-label fw-semibold">
+              Item Code
+            </label>
+
+            <input type="text"
+                   class="form-control"
+                   formControlName="itemCode">
+
+            @if (line.get('itemCode')?.invalid &&
+            line.get('itemCode')?.touched) {
+
+            <small class="text-danger">
+              Item Code is required.
+            </small>
+
+            }
+
+          </div>
+
+        </div>
+
+
+        <!-- ================= QUANTITY / UNIT ================= -->
+
+        <div class="row">
+
+          <!-- Unit Type -->
+          <div class="col-md-3 mb-3">
+
+            <label class="form-label fw-semibold">
+              Unit Type
+            </label>
+
+            <input type="text"
+                   class="form-control"
+                   formControlName="unitType">
+
+            @if (line.get('unitType')?.invalid &&
+            line.get('unitType')?.touched) {
+
+            <small class="text-danger">
+              Unit Type is required.
+            </small>
+
+            }
+
+          </div>
+
+
+          <!-- Quantity -->
+          <div class="col-md-3 mb-3">
+
+            <label class="form-label fw-semibold">
+              Quantity
+            </label>
+
+            <input type="number"
+                   class="form-control"
+                   formControlName="quantity"
+                   step="0.00001"
+                   min="0"
+                   (input)="calculateLine(line)">
+
+            @if (line.get('quantity')?.invalid &&
+            line.get('quantity')?.touched) {
+
+            <small class="text-danger">
+              Quantity must be greater than or equal to 0.
+            </small>
+
+            }
+
+          </div>
+
+
+          <!-- Internal Code -->
+          <div class="col-md-3 mb-3">
+
+            <label class="form-label fw-semibold">
+              Internal Code (Optional)
+            </label>
+
+            <input type="text"
+                   class="form-control"
+                   formControlName="internalCode">
+
+          </div>
+
+        </div>
+
+
+        <!-- ================= UNIT VALUE ================= -->
+
+        <div class="p-3 bg-white border rounded mb-3"
+             formGroupName="unitValue">
+
+          <h6 class="text-primary fw-bold mb-3">
+            Unit Value Details
+          </h6>
+
+          <div class="row">
+
+            <!-- Currency -->
+            <div class="col-md-3 mb-2">
+
+              <label class="form-label">
+                Currency Sold
+              </label>
+
+              <input type="text"
+                     class="form-control"
+                     formControlName="currencySold"
+                     readonly>
+
+            </div>
+
+
+            <!-- Amount EGP -->
+            <div class="col-md-3 mb-2">
+
+              <label class="form-label">
+                Amount EGP
+              </label>
+
+              <input type="number"
+                     class="form-control"
+                     formControlName="amountEGP"
+                     step="0.00001"
+                     min="0"
+                     (input)="calculateLine(line)">
+
+              @if (line.get('unitValue')?.get('amountEGP')?.invalid &&
+              line.get('unitValue')?.get('amountEGP')?.touched) {
+
+              <small class="text-danger">
+                Amount EGP is required.
+              </small>
+
+              }
+
+            </div>
+
+           
+
+          </div>
+
+        </div>
+
+
+        <!-- ================= DISCOUNT ================= -->
+
+        <div class="p-3 bg-white border rounded mb-3"
+             formGroupName="discount">
+
+          <h6 class="text-primary fw-bold mb-3">
+            Line Discount (Optional)
+          </h6>
+
+          <div class="row">
+
+            <!-- Discount Rate -->
+            <div class="col-md-6 mb-2">
+
+              <label class="form-label">
+                Discount Rate (%)
+              </label>
+
+              <input type="number"
+                     class="form-control"
+                     formControlName="rate"
+                     step="0.00001"
+                     min="0"
+                     max="100"
+                     placeholder="Enter discount rate"
+                     (input)="calculateLine(line)">
+
+              @if (line.get('discount')?.get('rate')?.invalid &&
+              line.get('discount')?.get('rate')?.touched) {
+
+              <small class="text-danger">
+                Discount rate must be between 0 and 100.
+              </small>
+
+              }
+
+            </div>
+
+
+            <!-- Discount Amount -->
+            <div class="col-md-6 mb-2">
+
+              <label class="form-label">
+                Discount Amount
+              </label>
+
+              <input type="number"
+                     class="form-control"
+                     formControlName="amount"
+                     step="0.00001"
+                     readonly>
+
+              <small class="text-muted">
+                Automatically calculated from Discount Rate.
+              </small>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <!-- ================= TAXES ================= -->
+
+        <div class="p-3 bg-white border rounded mb-3"
+             formArrayName="taxableItems">
+
+          <div class="d-flex justify-content-between align-items-center mb-3">
+
+            <h6 class="text-primary fw-bold mb-0">
+              Taxable Items (Taxes)
+            </h6>
+
+            <button type="button"
+                    class="btn btn-sm btn-outline-secondary"
+                    (click)="addTax(line)">
+
+              + Add Tax
+
+            </button>
+
+          </div>
+
+
+          @for (tax of getTaxableItems(line).controls; track $index) {
+
+          <div class="row g-3 tax-row mb-3"
+               [formGroupName]="$index">
+
+            <!-- Tax Type -->
+            <div class="col-md-4">
+
+              <label class="form-label small mb-1">
+                Tax Type
+              </label>
+
+              <select class="form-select form-select-sm"
+                      formControlName="taxType">
+
+                <option value="T1">
+                  T1 - Value Added Tax (VAT)
+                </option>
+
+                <option value="T2">
+                  T2 - Table Tax (Percentage)
+                </option>
+
+                <option value="T3">
+                  T3 - Table Tax (Fixed Amount)
+                </option>
+
+                <option value="T4">
+                  T4 - Withholding Tax (WHT)
+                </option>
+
+                <option value="T5">
+                  T5 - Stamping Tax
+                </option>
+
+                <option value="T6">
+                  T6 - Health Insurance Fee
+                </option>
+
+              </select>
+
+            </div>
+
+
+            <!-- Tax Rate -->
+            <div class="col-md-3">
+
+              <label class="form-label small mb-1">
+                Tax Rate (%)
+              </label>
+
+              <input type="number"
+                     class="form-control form-control-sm"
+                     formControlName="rate"
+                     step="0.00001"
+                     min="0"
+                     max="100"
+                     placeholder="Rate (%)"
+                     (input)="calculateTaxes(line)">
+
+            </div>
+
+
+            <!-- Tax Amount -->
+            <div class="col-md-4">
+
+              <label class="form-label small mb-1">
+                Tax Amount
+              </label>
+
+              <input type="number"
+                     class="form-control form-control-sm"
+                     formControlName="amount"
+                     step="0.00001"
+                     readonly>
+
+              <small class="text-muted d-block mt-1">
+                Automatically calculated.
+              </small>
+
+            </div>
+
+
+            <!-- Remove Tax -->
+            <div class="col-md-1 d-flex flex-column justify-content-end">
+
+              <button type="button"
+                      class="btn btn-sm btn-outline-danger w-100"
+                      (click)="removeTax(line, $index)">
+
+                &times;
+
+              </button>
+
+            </div>
+
+          </div>
+
+          }
+
+        </div>
+
+
+        <!-- ================= REMOVE LINE ================= -->
+
+        <div class="text-end">
+
+          <button type="button"
+                  class="btn btn-danger"
+                  (click)="removeInvoiceLine($index)">
+
+            Remove Line
+
+          </button>
+
+        </div>
+
+      </div>
+
+      }
+
+    </div>
+
+
+    <!-- ================= ADD LINE ================= -->
+
+    <button type="button"
+            class="btn btn-outline-primary mb-4"
+            (click)="addInvoiceLine()">
+
+      + Add Invoice Line
+
+    </button>
+
+  </div>
+
+</div>

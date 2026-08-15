@@ -1,0 +1,44 @@
+﻿@model Invoice.Core.Models.Invoices
+
+<div class="section-header mb-3">
+    <h5 class="text-primary fw-bold">Invoice Information</h5>
+    <hr />
+</div>
+
+<div class="row g-3">
+
+    <div class="col-md-4">
+        <label asp-for="DocumentType" class="form-label"></label>
+        <input asp-for="DocumentType"
+               class="form-control"
+               value="i"
+               readonly />
+    </div>
+
+    <div class="col-md-4">
+        <label asp-for="DocumentTypeVersion" class="form-label"></label>
+        <input asp-for="DocumentTypeVersion"
+               class="form-control"
+               value="1.0"
+               readonly />
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="TaxpayerActivityCode" class="form-label"></label>
+        <input asp-for="TaxpayerActivityCode"
+               class="form-control" />
+
+        <span asp-validation-for="TaxpayerActivityCode"
+              class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="InternalId" class="form-label"></label>
+        <input asp-for="InternalId"
+               class="form-control" />
+
+        <span asp-validation-for="InternalId"
+              class="text-danger"></span>
+    </div>
+
+</div>

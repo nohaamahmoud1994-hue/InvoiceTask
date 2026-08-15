@@ -1,0 +1,162 @@
+﻿@model Invoice.Core.Models.Invoices
+
+@{
+    ViewData["Title"] = "Invoice Validation";
+}
+
+<div class="container">
+
+    <main role="main" class="pb-3">
+
+        <header class="mb-4">
+            <h3 class="text-primary">Invoice Validation</h3>
+        </header>
+
+        <form asp-action="Index" method="post">
+
+            <!-- Tabs -->
+            <ul class="nav nav-tabs mb-4" id="invoiceTabs" role="tablist">
+
+                <li class="nav-item">
+                    <button class="nav-link active"
+                            data-bs-toggle="tab"
+                            data-bs-target="#invoice-info"
+                            type="button">
+                        Invoice Info
+                    </button>
+                </li>
+
+                <li class="nav-item">
+                    <button class="nav-link"
+                            data-bs-toggle="tab"
+                            data-bs-target="#issuer"
+                            type="button">
+                        Issuer
+                    </button>
+                </li>
+
+                <li class="nav-item">
+                    <button class="nav-link"
+                            data-bs-toggle="tab"
+                            data-bs-target="#receiver"
+                            type="button">
+                        Receiver
+                    </button>
+                </li>
+
+                <li class="nav-item">
+                    <button class="nav-link"
+                            data-bs-toggle="tab"
+                            data-bs-target="#lines"
+                            type="button">
+                        Invoice Lines
+                    </button>
+                </li>
+
+             @*    <li class="nav-item">
+                    <button class="nav-link"
+                            data-bs-toggle="tab"
+                            data-bs-target="#totals"
+                            type="button">
+                        Totals
+                    </button>
+                </li> *@
+
+            </ul>
+
+            <!-- Tab Content -->
+
+            <div class="tab-content">
+
+                <!-- Invoice -->
+                <div class="tab-pane fade show active"
+                     id="invoice-info">
+
+                    <partial name="_InvoiceInfo"
+                             model="Model" />
+
+                </div>
+
+                <!-- Issuer -->
+
+                <div class="tab-pane fade"
+                     id="issuer">
+
+                    <partial name="_Issuer"
+                             model="Model" />
+
+                </div>
+
+                <!-- Receiver -->
+
+                <div class="tab-pane fade"
+                     id="receiver">
+
+                    <partial name="_Receiver"
+                             model="Model" />
+
+                </div>
+
+                <!-- Invoice Lines -->
+
+                <div class="tab-pane fade"
+                     id="lines">
+
+                    <partial name="_InvoiceLine"
+                             model="Model" />
+
+                </div>
+
+              
+
+            </div>
+
+            <footer class="d-flex justify-content-end gap-3 mt-4">
+
+                <button type="submit"
+                        class="btn btn-primary px-4">
+
+                    Validate Invoice
+
+                </button>
+
+            </footer>
+
+        </form>
+
+        @if (ViewBag.Result != null)
+        {
+            <hr />
+
+            <partial name="_ValidationResult"
+                     model="ViewBag.Result" />
+        }
+
+    </main>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const firstError = document.querySelector('.field-validation-error, .input-validation-error');
+            
+            if (firstError) {
+                const tabPane = firstError.closest('.tab-pane');
+                if (tabPane) {
+                    const tabId = tabPane.getAttribute('id');
+                    const tabButton = document.querySelector(`#invoiceTabs button[data-bs-target="#${tabId}"]`);
+                    
+                    if (tabButton) {
+                        const bsTab = new bootstrap.Tab(tabButton);
+                        bsTab.show();
+                    }
+                }
+            }
+        });
+    </script>
+}

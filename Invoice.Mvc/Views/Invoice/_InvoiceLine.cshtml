@@ -1,0 +1,1149 @@
+﻿@model Invoice.Core.Models.Invoices
+<style>
+        .remove-tax{
+        margin-bottom: 21px;
+    }
+</style>
+<div class="container mt-4">
+
+    <h3 class="text-primary mb-4">Invoice Lines</h3>
+
+    <div id="invoiceLinesContainer">
+
+        @if (Model?.InvoiceLines != null && Model.InvoiceLines.Any())
+        {
+            for (int i = 0; i < Model.InvoiceLines.Count; i++)
+            {
+                <div class="invoice-line border rounded p-3 mb-4 bg-light">
+
+                    <!-- Basic Info -->
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Description</label>
+
+                            <input name="InvoiceLines[@i].Description"
+                                   value="@Model.InvoiceLines[i].Description"
+                                   class="form-control"
+                                   required />
+                            <span asp-validation-for="@Model.InvoiceLines[i].Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label fw-semibold">ItemType</label>
+
+                            <select name="InvoiceLines[@i].ItemType"
+                                    class="form-select">
+
+                                <option value="EGS"
+                                        selected="@(Model.InvoiceLines[i].ItemType == "EGS")">
+                                    EGS
+                                </option>
+
+                                <option value="GS1"
+                                        selected="@(Model.InvoiceLines[i].ItemType == "GS1")">
+                                    GS1
+                                </option>
+
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label fw-semibold">ItemCode</label>
+
+                            <input name="InvoiceLines[@i].ItemCode"
+                                   value="@Model.InvoiceLines[i].ItemCode"
+                                   class="form-control"
+                                   required />
+                            <span asp-validation-for="@Model.InvoiceLines[i].ItemCode" class="text-danger"></span>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Quantity / Unit -->
+                    <div class="row">
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label fw-semibold">
+                                UnitType
+                            </label>
+
+                            <input name="InvoiceLines[@i].UnitType"
+                                   value="@Model.InvoiceLines[i].UnitType"
+                                   class="form-control"
+                                   required />
+                            <span asp-validation-for="@Model.InvoiceLines[i].UnitType" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label fw-semibold">
+                                Quantity
+                            </label>
+
+                            <input name="InvoiceLines[@i].Quantity"
+                                   value="@Model.InvoiceLines[i].Quantity"
+                                   class="form-control quantity"
+                                   type="number"
+                                   step="0.00001"
+                                   min="0"
+                                   required
+                                   oninput="if(this.value < 0) this.value = 0;" />
+                            <span asp-validation-for="@Model.InvoiceLines[i].Quantity" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label fw-semibold">
+                                Internal Code (Optional)
+                            </label>
+
+                            <input name="InvoiceLines[@i].InternalCode"
+                                   value="@Model.InvoiceLines[i].InternalCode"
+                                   class="form-control" />
+                        </div>
+
+                    </div>
+
+
+                    <!-- Unit Value -->
+                    <div class="p-3 bg-white border rounded mb-3">
+
+                        <h6 class="text-primary fw-bold mb-3">
+                            Unit Value Details
+                        </h6>
+
+                        <div class="row">
+
+                            <div class="col-md-3 mb-2">
+
+                                <label class="form-label">
+                                    Currency Sold
+                                </label>
+
+                                <input name="InvoiceLines[@i].UnitValue.CurrencySold"
+                                       value="@(Model.InvoiceLines[i].UnitValue?.CurrencySold ?? "EGP")"
+                                       class="form-control currency-sold"
+                                       oninput="toggleCurrencyFields(this)"
+                                       required readonly />
+                                <span asp-validation-for="@Model.InvoiceLines[i].UnitValue.CurrencySold" class="text-danger"></span>
+                            </div>
+
+
+                            <div class="col-md-3 mb-2">
+
+                                <label class="form-label">
+                                    Amount EGP
+                                </label>
+
+                                <input name="InvoiceLines[@i].UnitValue.AmountEGP"
+                                       value="@Model.InvoiceLines[i].UnitValue?.AmountEGP"
+                                       class="form-control amount-egp"
+                                       type="number"
+                                       step="0.00001"
+                                       min="0"
+                                       required
+                                       oninput="if(this.value < 0) this.value = 0;" />
+                                <span asp-validation-for="@Model.InvoiceLines[i].UnitValue.AmountEGP" class="text-danger"></span>
+
+                            </div>
+
+
+                            <div class="col-md-3 mb-2 foreign-field
+                                                @(Model.InvoiceLines[i].UnitValue?.CurrencySold == "EGP"
+                                                                             || string.IsNullOrEmpty(Model.InvoiceLines[i].UnitValue?.CurrencySold)
+                                                                             ? "d-none"
+                                                                             : "")">
+
+                                <label class="form-label">
+                                    Amount Sold
+                                </label>
+
+                                <input name="InvoiceLines[@i].UnitValue.AmountSold"
+                                       value="@Model.InvoiceLines[i].UnitValue?.AmountSold"
+                                       class="form-control"
+                                       type="number"
+                                       step="0.00001"
+                                       oninput="if(this.value < 0) this.value = 0;" />
+                                <span asp-validation-for="@Model.InvoiceLines[i].UnitValue.AmountSold" class="text-danger"></span>
+                            </div>
+
+
+                            <div  class="col-md-3 mb-2 foreign-field
+                                                @(Model.InvoiceLines[i].UnitValue?.CurrencySold == "EGP"
+                                                                             || string.IsNullOrEmpty(Model.InvoiceLines[i].UnitValue?.CurrencySold)
+                                                                             ? "d-none"
+                                                                             : "")">
+
+                        <label class="form-label">
+                            Exchange Rate
+                        </label>
+
+                                <input name="InvoiceLines[@i].UnitValue.CurrencyExchangeRate"
+                                       value="@Model.InvoiceLines[i].UnitValue?.CurrencyExchangeRate"
+                                       class="form-control"
+                                       type="number"
+                                       step="0.00001" />
+                                <span asp-validation-for="@Model.InvoiceLines[i].UnitValue.CurrencyExchangeRate" class="text-danger"></span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Discount -->
+                    <div class="p-3 bg-white border rounded mb-3">
+
+                        <h6 class="text-primary fw-bold mb-3">
+                            Line Discount (Optional)
+                        </h6>
+
+                        <div class="row">
+
+                            <div class="col-md-6 mb-2">
+
+                                <label class="form-label">
+                                    Discount Rate (%)
+                                </label>
+
+                                <input name="InvoiceLines[@i].Discount.Rate"
+                                       value="@Model.InvoiceLines[i].Discount?.Rate"
+                                       class="form-control discount-rate"
+                                       type="number"
+                                       step="0.00001"
+                                       min="0"
+                                       max="100"
+                                       placeholder="Enter discount rate" />
+
+                            </div>
+
+
+                            <div class="col-md-6 mb-2">
+
+                                <label class="form-label">
+                                    Discount Amount
+                                </label>
+
+                                <input name="InvoiceLines[@i].Discount.Amount"
+                                       value="@Model.InvoiceLines[i].Discount?.Amount"
+                                       class="form-control discount-amount"
+                                       type="number"
+                                       step="0.00001"
+                                       readonly />
+
+                                <small class="text-muted">
+                                    Automatically calculated from Discount Rate.
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Taxable Items -->
+                    <div class="p-3 bg-white border rounded mb-3">
+
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+
+                            <h6 class="text-primary fw-bold mb-0">
+                                Taxable Items (Taxes)
+                            </h6>
+
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-secondary"
+                                    onclick="addTaxableItem(this, @i)">
+                                + Add Tax
+                            </button>
+
+                        </div>
+
+
+                        <div class="taxes-container">
+
+                    @if (Model.InvoiceLines[i].TaxableItems != null)
+                            {
+                                for (int t = 0;
+                                t < Model.InvoiceLines[i].TaxableItems.Count;
+                                t++)
+                                {
+                                    <div class="row g-3 tax-row">
+
+                                        <!-- Tax Type -->
+                                        <div class="col-md-4">
+                                            <label class="form-label small mb-1">
+                                                Tax Type
+                                            </label>
+
+                                            <select name="InvoiceLines[${currentLineIndex}].TaxableItems[${taxIndex}].TaxType"
+                                                    class="form-select form-select-sm"
+                                                    required>
+                                                <option value="T1">T1 - Value Added Tax (VAT)</option>
+                                                <option value="T2">T2 - Table Tax (Percentage)</option>
+                                                <option value="T3">T3 - Table Tax (Fixed Amount)</option>
+                                                <option value="T4">T4 - Withholding Tax (WHT)</option>
+                                                <option value="T5">T5 - Stamping Tax</option>
+                                                <option value="T6">T6 - Health Insurance Fee</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Tax Rate -->
+                                        <div class="col-md-3">
+                                            <label class="form-label small mb-1">
+                                                Tax Rate (%)
+                                            </label>
+
+                                            <input name="InvoiceLines[${currentLineIndex}].TaxableItems[${taxIndex}].Rate"
+                                                   type="number"
+                                                   step="0.00001"
+                                                   min="0"
+                                                   max="100"
+                                                   class="form-control form-control-sm tax-rate"
+                                                   placeholder="Rate (%)"
+                                                   required
+                                                   oninput="if(this.value > 100) this.value = 100; if(this.value < 0) this.value = 0;" />
+                                        </div>
+
+                                        <!-- Tax Amount -->
+                                        <div class="col-md-4">
+                                            <label class="form-label small mb-1">
+                                                Tax Amount
+                                            </label>
+
+                                            <input name="InvoiceLines[${currentLineIndex}].TaxableItems[${taxIndex}].Amount"
+                                                   type="number"
+                                                   step="0.00001"
+                                                   min="0"
+                                                   class="form-control form-control-sm tax-amount"
+                                                   placeholder="Amount"
+                                                   readonly />
+
+                                            <small class="text-muted d-block mt-1">
+                                                Automatically calculated.
+                                            </small>
+                                        </div>
+
+                                        <!-- Remove -->
+                                        <div class="col-md-1 d-flex flex-column justify-content-end">
+                                            <button type="button"
+                                                    class="btn btn-sm btn-outline-danger w-100 remove-tax">
+                                                &times;
+                                            </button>
+                                        </div>
+
+                                    </div>
+                                }
+                            }
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Remove Line -->
+                    <div class="text-end">
+
+                        <button type="button"
+                                class="btn btn-danger remove-line">
+                            Remove Line
+                        </button>
+
+                    </div>
+
+                </div>
+            }
+        }
+
+    </div>
+
+
+    <button type="button"
+            id="addLineBtn"
+            class="btn btn-outline-primary mb-4">
+        + Add Invoice Line
+    </button>
+
+</div>
+
+
+<script>
+
+    let lineIndex = @(Model?.InvoiceLines?.Count ?? 0);
+
+
+    // ==========================================
+    // ADD INVOICE LINE
+    // ==========================================
+
+    document.getElementById("addLineBtn").addEventListener("click", function () {
+
+        const container =
+            document.getElementById("invoiceLinesContainer");
+
+        const line =
+            document.createElement("div");
+
+        line.className =
+            "invoice-line border rounded p-3 mb-4 bg-light";
+
+
+        line.innerHTML = `
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="form-label fw-semibold">
+                        Description
+                    </label>
+
+                    <input
+                        name="InvoiceLines[${lineIndex}].Description"
+                        class="form-control"
+                        required />
+
+                </div>
+
+
+                <div class="col-md-3 mb-3">
+
+                    <label class="form-label fw-semibold">
+                        ItemType
+                    </label>
+
+                    <select
+                        name="InvoiceLines[${lineIndex}].ItemType"
+                        class="form-select">
+
+                        <option value="EGS">
+                            EGS
+                        </option>
+
+                        <option value="GS1">
+                            GS1
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="col-md-3 mb-3">
+
+                    <label class="form-label fw-semibold">
+                        ItemCode
+                    </label>
+
+                    <input
+                        name="InvoiceLines[${lineIndex}].ItemCode"
+                        class="form-control"
+                        required />
+
+                </div>
+
+            </div>
+
+
+            <div class="row">
+
+                <div class="col-md-3 mb-3">
+
+                    <label class="form-label fw-semibold">
+                        UnitType
+                    </label>
+
+                    <input
+                        name="InvoiceLines[${lineIndex}].UnitType"
+                        class="form-control"
+                        required />
+
+                </div>
+
+
+                <div class="col-md-3 mb-3">
+
+                    <label class="form-label fw-semibold">
+                        Quantity
+                    </label>
+
+                    <input
+                        name="InvoiceLines[${lineIndex}].Quantity"
+                        type="number"
+                        step="0.00001"
+                        value="1"
+                        min="0"
+                        class="form-control quantity"
+                        required
+                        oninput="if(this.value < 0) this.value = 0;" />
+                </div>
+
+
+                <div class="col-md-3 mb-3">
+
+                    <label class="form-label fw-semibold">
+                        Internal Code (Optional)
+                    </label>
+
+                    <input
+                        name="InvoiceLines[${lineIndex}].InternalCode"
+                        class="form-control" />
+
+                </div>
+
+            </div>
+
+
+            <!-- Unit Value -->
+
+            <div class="p-3 bg-white border rounded mb-3">
+
+                <h6 class="text-primary fw-bold mb-3">
+                    Unit Value Details
+                </h6>
+
+                <div class="row">
+
+                    <div class="col-md-3 mb-2">
+
+                        <label class="form-label">
+                            Currency Sold
+                        </label>
+
+                        <input
+                            name="InvoiceLines[${lineIndex}].UnitValue.CurrencySold"
+                            value="EGP"
+                            class="form-control currency-sold"
+                            oninput="toggleCurrencyFields(this)"
+                            required readonly />
+
+                    </div>
+
+
+                    <div class="col-md-3 mb-2">
+
+                        <label class="form-label">
+                            Amount EGP
+                        </label>
+
+                        <input
+                            name="InvoiceLines[${lineIndex}].UnitValue.AmountEGP"
+                            type="number"
+                            step="0.00001"
+                            min="0"
+                            class="form-control amount-egp"
+                            required
+                            oninput="if(this.value < 0) this.value = 0;" />
+
+                    </div>
+
+
+                    <div class="col-md-3 mb-2 foreign-field d-none">
+
+                        <label class="form-label">
+                            Amount Sold
+                        </label>
+
+                        <input
+                            name="InvoiceLines[${lineIndex}].UnitValue.AmountSold"
+                            type="number"
+                            step="0.00001"
+                            class="form-control"
+                            oninput="if(this.value < 0) this.value = 0;" />
+
+                    </div>
+
+
+                    <div class="col-md-3 mb-2 foreign-field d-none">
+
+                        <label class="form-label">
+                            Exchange Rate
+                        </label>
+
+                        <input
+                            name="InvoiceLines[${lineIndex}].UnitValue.CurrencyExchangeRate"
+                            type="number"
+                            step="0.00001"
+                            class="form-control" />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Discount -->
+
+            <div class="p-3 bg-white border rounded mb-3">
+
+                <h6 class="text-primary fw-bold mb-3">
+                    Line Discount (Optional)
+                </h6>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-2">
+
+                        <label class="form-label">
+                            Discount Rate (%)
+                        </label>
+
+                        <input
+                            name="InvoiceLines[${lineIndex}].Discount.Rate"
+                            type="number"
+                            step="0.00001"
+                            min="0"
+                            max="100"
+                            class="form-control discount-rate"
+                            placeholder="Enter discount rate" oninput="if(this.value > 100) this.value = 100; if(this.value < 0) this.value = 0;" />
+
+                    </div>
+
+
+                    <div class="col-md-6 mb-2">
+
+                        <label class="form-label">
+                            Discount Amount
+                        </label>
+
+                        <input
+                            name="InvoiceLines[${lineIndex}].Discount.Amount"
+                            type="number"
+                            step="0.00001"
+                            class="form-control discount-amount"
+                            readonly />
+
+                        <small class="text-muted">
+                            Automatically calculated.
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Taxes -->
+
+            <div class="p-3 bg-white border rounded mb-3">
+
+                <div class="d-flex justify-content-between align-items-center mb-2">
+
+                    <h6 class="text-primary fw-bold mb-0">
+                        Taxable Items (Taxes)
+                    </h6>
+
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-outline-secondary"
+                        onclick="addTaxableItem(this, ${lineIndex})">
+
+                        + Add Tax
+
+                    </button>
+
+                </div>
+
+
+                <div class="taxes-container"></div>
+
+            </div>
+
+
+            <div class="text-end">
+
+                <button
+                    type="button"
+                    class="btn btn-danger remove-line">
+
+                    Remove Line
+
+                </button>
+
+            </div>
+        `;
+
+
+        container.appendChild(line);
+
+        lineIndex++;
+
+        attachCalculationEvents(line);
+
+    });
+
+
+    // ==========================================
+    // CALCULATE DISCOUNT
+    // ==========================================
+
+    function calculateDiscount(line) {
+
+        const quantity =
+            parseFloat(
+                line.querySelector(".quantity")?.value
+            ) || 0;
+
+        const amountEGP =
+            parseFloat(
+                line.querySelector(".amount-egp")?.value
+            ) || 0;
+
+        const rate =
+            parseFloat(
+                line.querySelector(".discount-rate")?.value
+            ) || 0;
+
+
+        const salesTotal =
+            quantity * amountEGP;
+
+
+        const discountAmount =
+            salesTotal * rate / 100;
+
+
+        const discountInput =
+            line.querySelector(".discount-amount");
+
+
+        if (discountInput) {
+
+            discountInput.value =
+                discountAmount.toFixed(5);
+
+        }
+
+    }
+
+
+    // ==========================================
+    // CALCULATE TAX
+    // ==========================================
+
+    function calculateTaxes(line) {
+
+        const quantity =
+            parseFloat(
+                line.querySelector(".quantity")?.value
+            ) || 0;
+
+        const amountEGP =
+            parseFloat(
+                line.querySelector(".amount-egp")?.value
+            ) || 0;
+
+        const discountRate =
+            parseFloat(
+                line.querySelector(".discount-rate")?.value
+            ) || 0;
+
+
+        // Sales Total
+        const salesTotal =
+            quantity * amountEGP;
+
+
+        // Discount
+        const discountAmount =
+            salesTotal * discountRate / 100;
+
+
+        // Net Total
+        const netTotal =
+            salesTotal - discountAmount;
+
+
+        // Calculate every tax
+        const taxRows =
+            line.querySelectorAll(".tax-row");
+
+
+        taxRows.forEach(row => {
+
+            const taxRate =
+                parseFloat(
+                    row.querySelector(".tax-rate")?.value
+                ) || 0;
+
+
+            const taxAmount =
+                netTotal * taxRate / 100;
+
+
+            const amountInput =
+                row.querySelector(".tax-amount");
+
+
+            if (amountInput) {
+
+                amountInput.value =
+                    taxAmount.toFixed(5);
+
+            }
+
+        });
+
+    }
+
+
+    // ==========================================
+    // CALCULATE EVERYTHING
+    // ==========================================
+
+    function calculateLine(line) {
+
+        calculateDiscount(line);
+
+        calculateTaxes(line);
+
+    }
+
+
+    // ==========================================
+    // ATTACH EVENTS
+    // ==========================================
+
+    function attachCalculationEvents(line) {
+
+        const inputs =
+            line.querySelectorAll(
+                ".quantity, .amount-egp, .discount-rate"
+            );
+
+
+        inputs.forEach(input => {
+
+            input.addEventListener("input", function () {
+
+                calculateLine(line);
+
+            });
+
+        });
+
+
+        // Tax Rate events
+        const taxRates =
+            line.querySelectorAll(".tax-rate");
+
+
+        taxRates.forEach(input => {
+
+            input.addEventListener("input", function () {
+
+                calculateTaxes(line);
+
+            });
+
+        });
+
+
+        calculateLine(line);
+
+    }
+
+
+    // Existing lines
+    document
+        .querySelectorAll(".invoice-line")
+        .forEach(line => {
+
+            attachCalculationEvents(line);
+
+        });
+
+
+    // ==========================================
+    // REMOVE LINE / TAX
+    // ==========================================
+
+    document.addEventListener("click", function (e) {
+
+        if (e.target.classList.contains("remove-line")) {
+
+            e.target
+                .closest(".invoice-line")
+                .remove();
+
+            reindexInvoiceLines();
+
+        }
+
+
+        if (e.target.classList.contains("remove-tax")) {
+
+            const container =
+                e.target.closest(".taxes-container");
+
+            e.target
+                .closest(".tax-row")
+                .remove();
+
+            reindexTaxes(container);
+
+            const line =
+                container.closest(".invoice-line");
+
+            calculateTaxes(line);
+
+        }
+
+    });
+
+
+    // ==========================================
+    // ADD TAX
+    // ==========================================
+
+    function addTaxableItem(button, currentLineIndex) {
+
+        const line =
+            button.closest(".invoice-line");
+
+
+        const taxesContainer =
+            line.querySelector(".taxes-container");
+
+
+        const taxIndex =
+            taxesContainer.children.length;
+
+
+        const taxHtml = `
+
+              <div class="row g-3 tax-row">
+
+        <!-- Tax Type -->
+        <div class="col-md-4">
+            <label class="form-label small mb-1">
+                Tax Type
+            </label>
+
+               <select
+        name="InvoiceLines[${currentLineIndex}].TaxableItems[${taxIndex}].TaxType"
+        class="form-select form-select-sm"
+        required>
+        <option value="T1">T1 - Value Added Tax (VAT)</option>
+        <option value="T2">T2 - Table Tax (Percentage)</option>
+        <option value="T3">T3 - Table Tax (Fixed Amount)</option>
+        <option value="T4">T4 - Withholding Tax (WHT)</option>
+        <option value="T5">T5 - Stamping Tax</option>
+        <option value="T6">T6 - Health Insurance Fee</option>
+    </select>
+        </div>
+
+        <!-- Tax Rate -->
+        <div class="col-md-3">
+            <label class="form-label small mb-1">
+                Tax Rate (%)
+            </label>
+
+            <input
+                name="InvoiceLines[${currentLineIndex}].TaxableItems[${taxIndex}].Rate"
+                type="number"
+                step="0.00001"
+                min="0"
+                max="100"
+                class="form-control form-control-sm tax-rate"
+                placeholder="Rate (%)"
+                required
+                oninput="if(this.value > 100) this.value = 100; if(this.value < 0) this.value = 0;" />
+        </div>
+
+        <!-- Tax Amount -->
+        <div class="col-md-4">
+            <label class="form-label small mb-1">
+                Tax Amount
+            </label>
+
+            <input
+                name="InvoiceLines[${currentLineIndex}].TaxableItems[${taxIndex}].Amount"
+                type="number"
+                step="0.00001"
+                min="0"
+                class="form-control form-control-sm tax-amount"
+                placeholder="Amount"
+                readonly />
+
+            <small class="text-muted d-block mt-1">
+                Automatically calculated.
+            </small>
+        </div>
+
+        <!-- Remove -->
+            <div class="col-md-1 d-flex flex-column justify-content-end">
+        <button
+            type="button"
+            class="btn btn-sm btn-outline-danger w-100 remove-tax">
+            &times;
+        </button>
+    </div>
+
+    </div>
+        `;
+
+
+        taxesContainer.insertAdjacentHTML(
+            "beforeend",
+            taxHtml
+        );
+
+
+        // Attach event to new tax rate
+        const newTaxRow =
+            taxesContainer.lastElementChild;
+
+
+        const taxRateInput =
+            newTaxRow.querySelector(".tax-rate");
+
+
+        taxRateInput.addEventListener(
+            "input",
+            function () {
+
+                calculateTaxes(line);
+
+            }
+        );
+
+
+        calculateTaxes(line);
+
+    }
+
+
+    // ==========================================
+    // CURRENCY
+    // ==========================================
+
+    function toggleCurrencyFields(input) {
+
+        const lineCard =
+            input.closest(".invoice-line");
+
+
+        const foreignFields =
+            lineCard.querySelectorAll(".foreign-field");
+
+
+        if (
+            input.value.trim().toUpperCase() !== "EGP" &&
+            input.value.trim() !== ""
+        ) {
+
+            foreignFields.forEach(el => {
+
+                el.classList.remove("d-none");
+
+            });
+
+        }
+        else {
+
+            foreignFields.forEach(el => {
+
+                el.classList.add("d-none");
+
+                el
+                    .querySelectorAll("input")
+                    .forEach(i => i.value = "");
+
+            });
+
+        }
+
+    }
+
+
+    // ==========================================
+    // REINDEX LINES
+    // ==========================================
+
+    function reindexInvoiceLines() {
+
+        const lines =
+            document.querySelectorAll(
+                "#invoiceLinesContainer .invoice-line"
+            );
+
+
+        lines.forEach((line, newIdx) => {
+
+            line
+                .querySelectorAll("input, select")
+                .forEach(input => {
+
+                    if (input.name) {
+
+                        input.name =
+                            input.name.replace(
+                                /InvoiceLines\[\d+\]/,
+                                `InvoiceLines[${newIdx}]`
+                            );
+
+                    }
+
+                });
+
+
+            const addTaxBtn =
+                line.querySelector(
+                    "button[onclick*='addTaxableItem']"
+                );
+
+
+            if (addTaxBtn) {
+
+                addTaxBtn.setAttribute(
+                    "onclick",
+                    `addTaxableItem(this, ${newIdx})`
+                );
+
+            }
+
+        });
+
+
+        lineIndex = lines.length;
+
+    }
+
+
+    // ==========================================
+    // REINDEX TAXES
+    // ==========================================
+
+    function reindexTaxes(container) {
+
+        const rows =
+            container.querySelectorAll(".tax-row");
+
+
+        rows.forEach((row, newTaxIdx) => {
+
+            row
+                .querySelectorAll("input")
+                .forEach(input => {
+
+                    if (input.name) {
+
+                        input.name =
+                            input.name.replace(
+                                /TaxableItems\[\d+\]/,
+                                `TaxableItems[${newTaxIdx}]`
+                            );
+
+                    }
+
+                });
+
+        });
+
+    }
+
+</script>

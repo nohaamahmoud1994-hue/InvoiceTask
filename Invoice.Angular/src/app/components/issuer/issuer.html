@@ -1,0 +1,226 @@
+<div [formGroup]="form">
+
+  <div class="section-header mb-3">
+    <h5 class="text-primary fw-bold">Issuer Information</h5>
+    <hr />
+  </div>
+
+  <div formGroupName="issuer">
+
+    <div class="row g-3">
+
+      <!-- Type -->
+      <div class="col-md-4">
+
+        <label class="form-label">Type</label>
+
+        <select class="form-select"
+                formControlName="type">
+
+          <option value="">-- Select Type --</option>
+          <option value="B">Business (B)</option>
+          <option value="P">Natural Person (P)</option>
+          <option value="F">Foreigner (F)</option>
+
+        </select>
+
+        @if (form.get('issuer.type')?.invalid &&
+        form.get('issuer.type')?.touched) {
+
+        <small class="text-danger">
+          Type is required.
+        </small>
+
+        }
+
+      </div>
+
+
+      <!-- Id -->
+      <div class="col-md-4">
+
+        <label class="form-label">Id</label>
+
+        <input type="text"
+               class="form-control"
+               formControlName="id">
+
+        @if (form.get('issuer.id')?.invalid &&
+        form.get('issuer.id')?.touched) {
+
+        <small class="text-danger">
+          Id is required.
+        </small>
+
+        }
+
+      </div>
+
+
+      <!-- Name -->
+      <div class="col-md-4">
+
+        <label class="form-label">Name</label>
+
+        <input type="text"
+               class="form-control"
+               formControlName="name">
+
+        @if (form.get('issuer.name')?.invalid &&
+        form.get('issuer.name')?.touched) {
+
+        <small class="text-danger">
+          Name is required.
+        </small>
+
+        }
+
+      </div>
+
+    </div>
+
+
+    <!-- Address -->
+
+    <div formGroupName="address"
+         class="mt-4">
+
+      <div class="section-header mb-3">
+        <h5 class="text-primary fw-bold">Address</h5>
+        <hr />
+      </div>
+
+      <div class="row g-3">
+
+        <!-- Branch Id -->
+        <div class="col-md-3">
+
+          <label class="form-label">Branch Id</label>
+
+          <input type="text"
+                 class="form-control"
+                 formControlName="branchId">
+
+          @if (form.get('issuer.address.branchId')?.invalid &&
+          form.get('issuer.address.branchId')?.touched) {
+
+          <small class="text-danger">
+            Branch Id is required.
+          </small>
+
+          }
+
+        </div>
+
+
+        <!-- Country -->
+        <div class="col-md-3">
+
+          <label class="form-label">Country</label>
+
+          <input type="text"
+                 class="form-control"
+                 formControlName="country">
+
+          @if (form.get('issuer.address.country')?.invalid &&
+          form.get('issuer.address.country')?.touched) {
+
+          <small class="text-danger">
+            Country is required.
+          </small>
+
+          }
+
+        </div>
+
+
+        <!-- Governate -->
+        <div class="col-md-3">
+
+          <label class="form-label">Governate</label>
+
+          <input type="text"
+                 class="form-control"
+                 formControlName="governate">
+
+          @if (form.get('issuer.address.governate')?.invalid &&
+          form.get('issuer.address.governate')?.touched) {
+
+          <small class="text-danger">
+            Governate is required.
+          </small>
+
+          }
+
+        </div>
+
+
+        <!-- Region City -->
+        <div class="col-md-3">
+
+          <label class="form-label">Region City</label>
+
+          <input type="text"
+                 class="form-control"
+                 formControlName="regionCity">
+
+          @if (form.get('issuer.address.regionCity')?.invalid &&
+          form.get('issuer.address.regionCity')?.touched) {
+
+          <small class="text-danger">
+            Region City is required.
+          </small>
+
+          }
+
+        </div>
+
+
+        <!-- Street -->
+        <div class="col-md-3">
+
+          <label class="form-label">Street</label>
+
+          <input type="text"
+                 class="form-control"
+                 formControlName="street">
+
+          @if (form.get('issuer.address.street')?.invalid &&
+          form.get('issuer.address.street')?.touched) {
+
+          <small class="text-danger">
+            Street is required.
+          </small>
+
+          }
+
+        </div>
+
+
+        <!-- Building Number -->
+        <div class="col-md-3">
+
+          <label class="form-label">Building Number</label>
+
+          <input type="text"
+                 class="form-control"
+                 formControlName="buildingNumber">
+
+          @if (form.get('issuer.address.buildingNumber')?.invalid &&
+          form.get('issuer.address.buildingNumber')?.touched) {
+
+          <small class="text-danger">
+            Building Number is required.
+          </small>
+
+          }
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

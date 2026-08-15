@@ -1,0 +1,41 @@
+﻿@model Invoice.Core.Responses.ValidationResponse
+
+@if (Model != null)
+{
+    <div class="mt-4">
+
+        @if (Model.IsValid)
+        {
+            <div class="alert alert-success">
+
+                <h5>Invoice is Valid ✔</h5>
+
+                <hr />
+
+                <p><strong>Total Sales:</strong> @Model.TotalSalesAmount</p>
+                <p><strong>Total Discount:</strong> @Model.TotalDiscountAmount</p>
+                <p><strong>Net Amount:</strong> @Model.NetAmount</p>
+                <p><strong>Total Amount:</strong> @Model.TotalAmount</p>
+
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-danger">
+
+                <h5>Validation Errors</h5>
+
+                <ul>
+
+                    @foreach (var error in Model.Errors)
+                    {
+                        <li>@error</li>
+                    }
+
+                </ul>
+
+            </div>
+        }
+
+    </div>
+}

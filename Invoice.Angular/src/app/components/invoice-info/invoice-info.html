@@ -1,0 +1,58 @@
+<div [formGroup]="form">
+
+  <div class="section-header mb-3">
+    <h5 class="text-primary fw-bold">Invoice Information</h5>
+    <hr />
+  </div>
+
+  <div class="row g-3">
+
+    <div class="col-md-4">
+      <label class="form-label">Document Type</label>
+      <input type="text"
+             class="form-control"
+             formControlName="documentType"
+             readonly>
+    </div>
+
+    <div class="col-md-4">
+      <label class="form-label">Document Type Version</label>
+      <input type="text"
+             class="form-control"
+             formControlName="documentTypeVersion"
+             readonly>
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label">Taxpayer Activity Code</label>
+
+      <input type="text"
+             class="form-control"
+             formControlName="taxpayerActivityCode">
+
+      @if (form.get('taxpayerActivityCode')?.invalid &&
+      form.get('taxpayerActivityCode')?.touched) {
+      <small class="text-danger">
+        Taxpayer Activity Code is required.
+      </small>
+      }
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label">Internal Id</label>
+
+      <input type="text"
+             class="form-control"
+             formControlName="internalId">
+
+      @if (form.get('internalId')?.invalid &&
+      form.get('internalId')?.touched) {
+      <small class="text-danger">
+        Internal Id is required.
+      </small>
+      }
+    </div>
+
+  </div>
+
+</div>
