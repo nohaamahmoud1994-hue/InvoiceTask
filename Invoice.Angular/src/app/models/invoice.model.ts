@@ -4,7 +4,8 @@ import { InvoiceLine } from "./invoice-line.model";
 import { TaxTotal } from "./tax-total.model";
 
 export interface Invoice {
-
+  id: number;
+  
   issuer: Issuer;
 
   receiver: Receiver;

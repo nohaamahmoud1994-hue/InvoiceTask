@@ -1,72 +1,266 @@
-﻿@model Invoice.Core.Models.Invoices
+﻿@using Invoice.Core.Models
+@model Invoices
 
-<div class="section-header mb-3">
-    <h5 class="text-primary fw-bold">Receiver Information</h5>
+<!-- Receiver Information -->
+
+<div class="section-header mb-4">
+
+    <div class="d-flex align-items-center">
+
+        <div class="section-icon me-2">
+            <i class="bi bi-person-vcard"></i>
+        </div>
+
+        <div>
+            <h5 class="fw-bold mb-0">Receiver Information</h5>
+            <small class="text-muted">
+                Information about the invoice receiver
+            </small>
+        </div>
+
+    </div>
+
     <hr />
-</div>
-
-<div class="row g-3">
-
-    <div class="col-md-4">
-        <label asp-for="Receiver.Type" class="form-label"></label>
-        <select asp-for="Receiver.Type" class="form-select">
-            <option value="">-- Select Type --</option>
-            <option value="B">Business (B)</option>
-            <option value="P">Natural Person (P)</option>
-            <option value="F">Foreigner (F)</option>
-        </select>
-        <span asp-validation-for="Receiver.Type" class="text-danger"></span>
-    </div>
-
-    <div class="col-md-4">
-        <label asp-for="Receiver.Id" class="form-label"></label>
-        <input asp-for="Receiver.Id" class="form-control" />
-        <span asp-validation-for="Receiver.Id" class="text-danger"></span>
-    </div>
-
-    <div class="col-md-4">
-        <label asp-for="Receiver.Name" class="form-label"></label>
-        <input asp-for="Receiver.Name" class="form-control" />
-        <span asp-validation-for="Receiver.Name" class="text-danger"></span>
-    </div>
 
 </div>
 
-<div class="section-header mt-4 mb-3">
-    <h5 class="text-primary fw-bold">Address</h5>
+
+<div class="row g-4">
+
+    <!-- Type -->
+    <div class="col-md-4">
+
+        <label asp-for="Receiver.Type"
+               class="form-label fw-semibold">
+        </label>
+
+        <div class="input-group">
+
+            <span class="input-group-text">
+                <i class="bi bi-person-badge"></i>
+            </span>
+
+            <select asp-for="Receiver.Type"
+                    class="form-select">
+
+                <option value="">-- Select Type --</option>
+                <option value="B">Business (B)</option>
+                <option value="P">Natural Person (P)</option>
+                <option value="F">Foreigner (F)</option>
+
+            </select>
+
+        </div>
+
+        <span asp-validation-for="Receiver.Type"
+              class="text-danger">
+        </span>
+
+    </div>
+
+
+    <!-- ID -->
+    <div class="col-md-4">
+
+        <label asp-for="Receiver.Id"
+               class="form-label fw-semibold">
+        </label>
+
+        <div class="input-group">
+
+            <span class="input-group-text">
+                <i class="bi bi-card-text"></i>
+            </span>
+
+            <input asp-for="Receiver.Id"
+                   class="form-control"
+                   placeholder="Enter receiver ID" />
+
+        </div>
+
+        <span asp-validation-for="Receiver.Id"
+              class="text-danger">
+        </span>
+
+    </div>
+
+
+    <!-- Name -->
+    <div class="col-md-4">
+
+        <label asp-for="Receiver.Name"
+               class="form-label fw-semibold">
+        </label>
+
+        <div class="input-group">
+
+            <span class="input-group-text">
+                <i class="bi bi-person"></i>
+            </span>
+
+            <input asp-for="Receiver.Name"
+                   class="form-control"
+                   placeholder="Enter receiver name" />
+
+        </div>
+
+        <span asp-validation-for="Receiver.Name"
+              class="text-danger">
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- Address -->
+
+<div class="section-header mt-5 mb-4">
+
+    <div class="d-flex align-items-center">
+
+        <div class="section-icon me-2">
+            <i class="bi bi-geo-alt"></i>
+        </div>
+
+        <div>
+            <h5 class="fw-bold mb-0">Address</h5>
+            <small class="text-muted">
+                Receiver address information
+            </small>
+        </div>
+
+    </div>
+
     <hr />
+
 </div>
 
-<div class="row g-3">
 
+<div class="row g-4">
+
+    <!-- Country -->
     <div class="col-md-3">
-        <label asp-for="Receiver.Address.Country" class="form-label"></label>
-        <input asp-for="Receiver.Address.Country" class="form-control" />
-        <span asp-validation-for="Receiver.Address.Country" class="text-danger"></span>
+
+        <label asp-for="Receiver.Address.Country"
+               class="form-label fw-semibold">
+        </label>
+
+        <div class="input-group">
+
+            <span class="input-group-text">
+                <i class="bi bi-globe"></i>
+            </span>
+
+            <input asp-for="Receiver.Address.Country"
+                   class="form-control" />
+
+        </div>
+
+        <span asp-validation-for="Receiver.Address.Country"
+              class="text-danger">
+        </span>
+
     </div>
 
+
+    <!-- Governate -->
     <div class="col-md-3">
-        <label asp-for="Receiver.Address.Governate" class="form-label"></label>
-        <input asp-for="Receiver.Address.Governate" class="form-control" />
-        <span asp-validation-for="Receiver.Address.Governate" class="text-danger"></span>
+
+        <label asp-for="Receiver.Address.Governate"
+               class="form-label fw-semibold">
+        </label>
+
+        <div class="input-group">
+
+            <span class="input-group-text">
+                <i class="bi bi-map"></i>
+            </span>
+
+            <input asp-for="Receiver.Address.Governate"
+                   class="form-control" />
+
+        </div>
+
+        <span asp-validation-for="Receiver.Address.Governate"
+              class="text-danger">
+        </span>
+
     </div>
 
+
+    <!-- Region City -->
     <div class="col-md-3">
-        <label asp-for="Receiver.Address.RegionCity" class="form-label"></label>
-        <input asp-for="Receiver.Address.RegionCity" class="form-control" />
-        <span asp-validation-for="Receiver.Address.RegionCity" class="text-danger"></span>
+
+        <label asp-for="Receiver.Address.RegionCity"
+               class="form-label fw-semibold">
+        </label>
+
+        <div class="input-group">
+
+            <span class="input-group-text">
+                <i class="bi bi-pin-map"></i>
+            </span>
+
+            <input asp-for="Receiver.Address.RegionCity"
+                   class="form-control" />
+
+        </div>
+
+        <span asp-validation-for="Receiver.Address.RegionCity"
+              class="text-danger">
+        </span>
+
     </div>
 
-    <div class="col-md-3">
-        <label asp-for="Receiver.Address.Street" class="form-label"></label>
-        <input asp-for="Receiver.Address.Street" class="form-control" />
-        <span asp-validation-for="Receiver.Address.Street" class="text-danger"></span>
+
+    <!-- Street -->
+    <div class="col-md-6">
+
+        <label asp-for="Receiver.Address.Street"
+               class="form-label fw-semibold">
+        </label>
+
+        <div class="input-group">
+
+            <span class="input-group-text">
+                <i class="bi bi-signpost"></i>
+            </span>
+
+            <input asp-for="Receiver.Address.Street"
+                   class="form-control" />
+
+        </div>
+
+        <span asp-validation-for="Receiver.Address.Street"
+              class="text-danger">
+        </span>
+
     </div>
 
-    <div class="col-md-3">
-        <label asp-for="Receiver.Address.BuildingNumber" class="form-label"></label>
-        <input asp-for="Receiver.Address.BuildingNumber" class="form-control" />
-        <span asp-validation-for="Receiver.Address.BuildingNumber" class="text-danger"></span>
+
+    <!-- Building Number -->
+    <div class="col-md-6">
+
+        <label asp-for="Receiver.Address.BuildingNumber"
+               class="form-label fw-semibold">
+        </label>
+
+        <div class="input-group">
+
+            <span class="input-group-text">
+                <i class="bi bi-house"></i>
+            </span>
+
+            <input asp-for="Receiver.Address.BuildingNumber"
+                   class="form-control" />
+
+        </div>
+
+        <span asp-validation-for="Receiver.Address.BuildingNumber"
+              class="text-danger">
+        </span>
+
     </div>
 
 </div>

@@ -1,113 +1,290 @@
-﻿@model Invoice.Core.Models.Invoices
+﻿@using Invoice.Core.Models
+@model Invoices
 
-<div class="section-header mb-3">
-    <h5 class="text-primary fw-bold">Issuer Information</h5>
+<!-- Issuer Information -->
+
+<div class="section-header mb-4">
+
+    <div class="d-flex align-items-center">
+
+        <div class="section-icon me-2">
+            <i class="bi bi-building"></i>
+        </div>
+
+        <div>
+            <h5 class="fw-bold mb-0">Issuer Information</h5>
+            <small class="text-muted">
+                Information about the invoice issuer
+            </small>
+        </div>
+
+    </div>
+
     <hr />
-</div>
-
-<div class="row g-3">
-
-    <div class="col-md-4">
-
-        <label asp-for="Issuer.Type"></label>
-
-        <select asp-for="Issuer.Type" class="form-select">
-            <option value="">-- Select Type --</option>
-            <option value="B">Business (B)</option>
-            <option value="P">Natural Person (P)</option>
-            <option value="F">Foreigner (F)</option>
-        </select>
-
-        <span asp-validation-for="Issuer.Type" class="text-danger"></span>
-
-    </div>
-
-    <div class="col-md-4">
-
-        <label asp-for="Issuer.Id"></label>
-
-        <input asp-for="Issuer.Id" class="form-control" />
-
-        <span asp-validation-for="Issuer.Id" class="text-danger"></span>
-
-    </div>
-
-    <div class="col-md-4">
-
-        <label asp-for="Issuer.Name"></label>
-
-        <input asp-for="Issuer.Name" class="form-control" />
-
-        <span asp-validation-for="Issuer.Name" class="text-danger"></span>
-
-    </div>
 
 </div>
 
-<div class="section-header mt-4 mb-3">
-    <h5 class="text-primary fw-bold">Address</h5>
+
+<div class="row g-4">
+
+    <!-- Type -->
+    <div class="col-md-4">
+
+        <label asp-for="Issuer.Type"
+               class="form-label fw-semibold">
+        </label>
+
+        <div class="input-group">
+
+            <span class="input-group-text">
+                <i class="bi bi-person-badge"></i>
+            </span>
+
+            <select asp-for="Issuer.Type"
+                    class="form-select">
+
+                <option value="">-- Select Type --</option>
+                <option value="B">Business (B)</option>
+                <option value="P">Natural Person (P)</option>
+                <option value="F">Foreigner (F)</option>
+
+            </select>
+
+        </div>
+
+        <span asp-validation-for="Issuer.Type"
+              class="text-danger">
+        </span>
+
+    </div>
+
+
+    <!-- ID -->
+    <div class="col-md-4">
+
+        <label asp-for="Issuer.Id"
+               class="form-label fw-semibold">
+        </label>
+
+        <div class="input-group">
+
+            <span class="input-group-text">
+                <i class="bi bi-card-text"></i>
+            </span>
+
+            <input asp-for="Issuer.Id"
+                   class="form-control"
+                   placeholder="Enter issuer ID" />
+
+        </div>
+
+        <span asp-validation-for="Issuer.Id"
+              class="text-danger">
+        </span>
+
+    </div>
+
+
+    <!-- Name -->
+    <div class="col-md-4">
+
+        <label asp-for="Issuer.Name"
+               class="form-label fw-semibold">
+        </label>
+
+        <div class="input-group">
+
+            <span class="input-group-text">
+                <i class="bi bi-building"></i>
+            </span>
+
+            <input asp-for="Issuer.Name"
+                   class="form-control"
+                   placeholder="Enter issuer name" />
+
+        </div>
+
+        <span asp-validation-for="Issuer.Name"
+              class="text-danger">
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- Address -->
+
+<div class="section-header mt-5 mb-4">
+
+    <div class="d-flex align-items-center">
+
+        <div class="section-icon me-2">
+            <i class="bi bi-geo-alt"></i>
+        </div>
+
+        <div>
+            <h5 class="fw-bold mb-0">Address</h5>
+            <small class="text-muted">
+                Issuer address information
+            </small>
+        </div>
+
+    </div>
+
     <hr />
+
 </div>
 
-<div class="row g-3">
 
+<div class="row g-4">
+
+    <!-- Branch ID -->
     <div class="col-md-3">
 
-        <label asp-for="Issuer.Address.BranchId"></label>
+        <label asp-for="Issuer.Address.BranchId"
+               class="form-label fw-semibold">
+        </label>
 
-        <input asp-for="Issuer.Address.BranchId" class="form-control" />
+        <div class="input-group">
 
-        <span asp-validation-for="Issuer.Address.BranchId" class="text-danger"></span>
+            <span class="input-group-text">
+                <i class="bi bi-diagram-3"></i>
+            </span>
+
+            <input asp-for="Issuer.Address.BranchId"
+                   class="form-control" />
+
+        </div>
+
+        <span asp-validation-for="Issuer.Address.BranchId"
+              class="text-danger">
+        </span>
 
     </div>
 
+
+    <!-- Country -->
     <div class="col-md-3">
 
-        <label asp-for="Issuer.Address.Country"></label>
+        <label asp-for="Issuer.Address.Country"
+               class="form-label fw-semibold">
+        </label>
 
-        <input asp-for="Issuer.Address.Country" class="form-control" />
+        <div class="input-group">
 
-        <span asp-validation-for="Issuer.Address.Country" class="text-danger"></span>
+            <span class="input-group-text">
+                <i class="bi bi-globe"></i>
+            </span>
+
+            <input asp-for="Issuer.Address.Country"
+                   class="form-control" />
+
+        </div>
+
+        <span asp-validation-for="Issuer.Address.Country"
+              class="text-danger">
+        </span>
 
     </div>
 
+
+    <!-- Governate -->
     <div class="col-md-3">
 
-        <label asp-for="Issuer.Address.Governate"></label>
+        <label asp-for="Issuer.Address.Governate"
+               class="form-label fw-semibold">
+        </label>
 
-        <input asp-for="Issuer.Address.Governate" class="form-control" />
+        <div class="input-group">
 
-        <span asp-validation-for="Issuer.Address.Governate" class="text-danger"></span>
+            <span class="input-group-text">
+                <i class="bi bi-map"></i>
+            </span>
+
+            <input asp-for="Issuer.Address.Governate"
+                   class="form-control" />
+
+        </div>
+
+        <span asp-validation-for="Issuer.Address.Governate"
+              class="text-danger">
+        </span>
 
     </div>
 
+
+    <!-- Region City -->
     <div class="col-md-3">
 
-        <label asp-for="Issuer.Address.RegionCity"></label>
+        <label asp-for="Issuer.Address.RegionCity"
+               class="form-label fw-semibold">
+        </label>
 
-        <input asp-for="Issuer.Address.RegionCity" class="form-control" />
+        <div class="input-group">
 
-        <span asp-validation-for="Issuer.Address.RegionCity" class="text-danger"></span>
+            <span class="input-group-text">
+                <i class="bi bi-pin-map"></i>
+            </span>
+
+            <input asp-for="Issuer.Address.RegionCity"
+                   class="form-control" />
+
+        </div>
+
+        <span asp-validation-for="Issuer.Address.RegionCity"
+              class="text-danger">
+        </span>
 
     </div>
 
-    <div class="col-md-3">
 
-        <label asp-for="Issuer.Address.Street"></label>
+    <!-- Street -->
+    <div class="col-md-6">
 
-        <input asp-for="Issuer.Address.Street" class="form-control" />
+        <label asp-for="Issuer.Address.Street"
+               class="form-label fw-semibold">
+        </label>
 
-        <span asp-validation-for="Issuer.Address.Street" class="text-danger"></span>
+        <div class="input-group">
+
+            <span class="input-group-text">
+                <i class="bi bi-signpost"></i>
+            </span>
+
+            <input asp-for="Issuer.Address.Street"
+                   class="form-control" />
+
+        </div>
+
+        <span asp-validation-for="Issuer.Address.Street"
+              class="text-danger">
+        </span>
 
     </div>
 
-    <div class="col-md-3">
 
-        <label asp-for="Issuer.Address.BuildingNumber"></label>
+    <!-- Building Number -->
+    <div class="col-md-6">
 
-        <input asp-for="Issuer.Address.BuildingNumber" class="form-control" />
+        <label asp-for="Issuer.Address.BuildingNumber"
+               class="form-label fw-semibold">
+        </label>
 
-        <span asp-validation-for="Issuer.Address.BuildingNumber" class="text-danger"></span>
+        <div class="input-group">
+
+            <span class="input-group-text">
+                <i class="bi bi-house"></i>
+            </span>
+
+            <input asp-for="Issuer.Address.BuildingNumber"
+                   class="form-control" />
+
+        </div>
+
+        <span asp-validation-for="Issuer.Address.BuildingNumber"
+              class="text-danger">
+        </span>
 
     </div>
 

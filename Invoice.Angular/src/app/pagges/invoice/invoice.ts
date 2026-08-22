@@ -1,241 +1,152 @@
-import { Component, inject, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  Component,
+  OnInit,
+  inject,
+  ChangeDetectorRef,
+  PLATFORM_ID
+} from '@angular/core';
 
 import {
-  FormArray,
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
+  isPlatformBrowser,
+  DatePipe,
+  DecimalPipe
+} from '@angular/common';
 
-import { InvoiceInfo } from '../../components/invoice-info/invoice-info';
-import { Issuer } from '../../components/issuer/issuer';
-import { Receiver } from '../../components/receiver/receiver';
-import { InvoiceLine } from '../../components/invoice-line/invoice-line';
-import { InvoiceResult } from '../../components/invoice-result/invoice-result';
+import { RouterLink } from '@angular/router';
 
 import { InvoiceService } from '../../services/invoice.service';
-import { ValidationResponse } from '../../models/validation-response.model';
+import { Invoice } from '../../models/invoice.model';
+
 
 @Component({
   selector: 'app-invoice',
   standalone: true,
 
   imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    InvoiceInfo,
-    Issuer,
-    Receiver,
-    InvoiceLine,
-    InvoiceResult
+    RouterLink,
+    DatePipe,
+    DecimalPipe
   ],
 
   templateUrl: './invoice.html',
-  styleUrls: ['./invoice.css']
+  styleUrl: './invoice.css',
 })
-export class Invoice {
+export class InvoicePage implements OnInit {
 
-  activeTab = 'invoice-info';
-
-  private fb = inject(FormBuilder);
   private invoiceService = inject(InvoiceService);
+
   private cdr = inject(ChangeDetectorRef);
 
-  validationResult: ValidationResponse | null = null;
-
-  invoiceForm: FormGroup = this.fb.group({
-
-    documentType: [
-      { value: 'i', disabled: true }
-    ],
-
-    documentTypeVersion: [
-      { value: '1.0', disabled: true }
-    ],
-
-    taxpayerActivityCode: [
-      '',
-      Validators.required
-    ],
-
-    internalId: [
-      '',
-      Validators.required
-    ],
-
-    issuer: this.fb.group({
-
-      type: [
-        '',
-        Validators.required
-      ],
-
-      id: [
-        '',
-        Validators.required
-      ],
-
-      name: [
-        '',
-        Validators.required
-      ],
-
-      address: this.fb.group({
-
-        branchId: [
-          '',
-          Validators.required
-        ],
-
-        country: [
-          '',
-          Validators.required
-        ],
-
-        governate: [
-          '',
-          Validators.required
-        ],
-
-        regionCity: [
-          '',
-          Validators.required
-        ],
-
-        street: [
-          '',
-          Validators.required
-        ],
-
-        buildingNumber: [
-          '',
-          Validators.required
-        ],
-
-        postalCode: [''],
-        floor: [''],
-        room: [''],
-        landmark: [''],
-        additionalInformation: ['']
-
-      })
-
-    }),
-
-    receiver: this.fb.group({
-
-      type: [
-        '',
-        Validators.required
-      ],
-
-      id: [
-        '',
-        Validators.required
-      ],
-
-      name: [
-        '',
-        Validators.required
-      ],
-
-      address: this.fb.group({
-
-        country: [
-          '',
-          Validators.required
-        ],
-
-        governate: [
-          '',
-          Validators.required
-        ],
-
-        regionCity: [
-          '',
-          Validators.required
-        ],
-
-        street: [
-          '',
-          Validators.required
-        ],
-
-        buildingNumber: [
-          '',
-          Validators.required
-        ]
-
-      })
-
-    }),
-
-    invoiceLines: this.fb.array([])
-
-  });
+  private platformId = inject(PLATFORM_ID);
 
 
-  get invoiceLines(): FormArray {
+  invoices: Invoice[] = [];
 
-    return this.invoiceForm.get(
-      'invoiceLines'
-    ) as FormArray;
+  loading = false;
+
+  errorMessage = '';
+
+  successMessage = '';
+
+
+  ngOnInit(): void {
+
+    if (isPlatformBrowser(this.platformId)) {
+
+      const message =
+        sessionStorage.getItem('invoiceSuccessMessage');
+
+      if (message) {
+
+        this.successMessage = message;
+
+        sessionStorage.removeItem(
+          'invoiceSuccessMessage'
+        );
+
+      }
+
+      this.loadInvoices();
+
+    }
 
   }
 
 
-  onSubmit(): void {
+  loadInvoices(): void {
 
-    if (this.invoiceForm.invalid) {
+    this.loading = true;
 
-      this.invoiceForm.markAllAsTouched();
+    this.errorMessage = '';
 
-      return;
-    }
 
-    const invoice =
-      this.invoiceForm.getRawValue();
+    this.invoiceService.getAllInvoices().subscribe({
 
-    this.invoiceService
-      .validateInvoice(invoice)
-      .subscribe({
+      next: (response: any) => {
 
-        next: (response: ValidationResponse) => {
+        console.log('API RESPONSE:', response);
 
-          console.log(
-            'Validation Response:',
-            response
-          );
 
-          this.validationResult = response;
+        if (response && response.isValid) {
 
-          // Force Angular to update the view
-          this.cdr.detectChanges();
+          this.invoices =
+            response.invoices || [];
 
-        },
+        }
+        else {
 
-        error: (error) => {
-
-          console.error(
-            'Validation Error:',
-            error
-          );
-
-          if (error.error) {
-
-            this.validationResult =
-              error.error;
-
-            // Force Angular to update the view
-            this.cdr.detectChanges();
-
-          }
+          this.errorMessage =
+            response?.message ||
+            'Failed to load invoices.';
 
         }
 
-      });
+
+        this.loading = false;
+
+        this.cdr.detectChanges();
+
+      },
+
+
+      error: (error: any) => {
+
+        console.error(
+          'API Error:',
+          error
+        );
+
+        this.errorMessage =
+          'Unable to connect to the Invoice API.';
+
+        this.loading = false;
+
+        this.cdr.detectChanges();
+
+      }
+
+    });
+
+  }
+
+
+  getTotalTax(invoice: Invoice): number {
+
+    if (!invoice.taxTotals) {
+
+      return 0;
+
+    }
+
+
+    return invoice.taxTotals.reduce(
+
+      (total, tax) =>
+        total + (tax.amount || 0),
+
+      0
+
+    );
 
   }
 

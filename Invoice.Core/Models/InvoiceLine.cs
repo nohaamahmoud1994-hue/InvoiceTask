@@ -1,39 +1,47 @@
-﻿namespace Invoice.Core.Models
+﻿using System.Text.Json.Serialization;
+
+namespace Invoice.Core.Models
 {
 
-        public class InvoiceLine
-        {
-            public string Description { get; set; } = null!;
+    public class InvoiceLine
+    {
+        public int Id { get; set; }
 
-            public string ItemType { get; set; } = null!;
+        public int InvoiceId { get; set; }
+        [JsonIgnore]
 
-            public string ItemCode { get; set; } = null!;
+        public Invoices? Invoice { get; set; }
+        public string Description { get; set; } = null!;
 
-            public string UnitType { get; set; } = null!;
+        public string ItemType { get; set; } = null!;
 
-            public decimal Quantity { get; set; }
+        public string ItemCode { get; set; } = null!;
 
-            public Value UnitValue { get; set; } = null!;
+        public string UnitType { get; set; } = null!;
 
-            public decimal SalesTotal { get; set; }
+        public decimal Quantity { get; set; }
 
-            public decimal Total { get; set; }
+        public Value UnitValue { get; set; } = null!;
 
-            public decimal ValueDifference { get; set; }
+        public decimal SalesTotal { get; set; }
 
-            public decimal TotalTaxableFees { get; set; }
+        public decimal Total { get; set; }
 
-            public decimal NetTotal { get; set; }
+        public decimal ValueDifference { get; set; }
 
-            public decimal ItemsDiscount { get; set; }
+        public decimal TotalTaxableFees { get; set; }
 
-            // Optional
-            public Discount? Discount { get; set; }
+        public decimal NetTotal { get; set; }
 
-            // Optional - zero or more
-            public List<TaxableItem> TaxableItems { get; set; } = new();
+        public decimal ItemsDiscount { get; set; }
 
-            // Optional
-            public string? InternalCode { get; set; }
+        // Optional
+        public Discount? Discount { get; set; }
+
+        // Optional - zero or more
+        public List<TaxableItem> TaxableItems { get; set; } = new();
+
+        // Optional
+        public string? InternalCode { get; set; }
     }
 }

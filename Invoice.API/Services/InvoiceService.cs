@@ -1,11 +1,22 @@
-﻿using Invoice.Core.Interfaces;
+﻿
+
+using Invoice.API.Data;
+using Invoice.Core.Interfaces;
 using Invoice.Core.Models;
 using Invoice.Core.Responses;
+using Invoice.Core.Responses.Invoice.Core.Responses;
+using Microsoft.EntityFrameworkCore;
 
 namespace Invoice.API.Services
 {
     public class InvoiceService : IInvoiceService
     {
+        private readonly InvoiceDbContext _context;
+
+        public InvoiceService(InvoiceDbContext context)
+        {
+            _context = context;
+        }
         public ValidationResponse ValidateInvoice(Invoices invoice)
         {
             var response = new ValidationResponse();
@@ -581,6 +592,199 @@ namespace Invoice.API.Services
         private bool HasMoreThanFiveDecimalPlaces(decimal value)
         {
             return decimal.Round(value, 5) != value;
+        }
+
+        public async Task<InvoiceOperationResponse> CreateAsync(Invoices invoice)
+        {
+            var response = new InvoiceOperationResponse();
+
+            if (invoice == null)
+            {
+                response.IsValid = false;
+                response.Errors.Add("Invoice cannot be null.");
+                return response;
+            }
+
+            // Validation + Calculation
+            var validation = ValidateInvoice(invoice);
+
+            if (!validation.IsValid)
+            {
+                response.IsValid = false;
+                response.Errors = validation.Errors;
+                return response;
+            }
+
+            // Add calculated invoice to database
+            _context.Invoices.Add(invoice);
+
+            await _context.SaveChangesAsync();
+
+            response.IsValid = true;
+            response.Message = "Invoice created successfully.";
+            response.Invoice = invoice;
+
+            return response;
+        }
+        public async Task<InvoiceGetAllResponse> GetAllAsync()
+        {
+            var response = new InvoiceGetAllResponse();
+
+            var invoices = await _context.Invoices
+                .Include(i => i.InvoiceLines)
+                .Include(i => i.TaxTotals)
+                .ToListAsync();
+
+            response.IsValid = true;
+            response.Message = "Invoices retrieved successfully.";
+            response.Invoices = invoices;
+
+            return response;
+        }
+        public async Task<InvoiceGetResponse> GetByIdAsync(int id)
+        {
+            var response = new InvoiceGetResponse();
+
+            var invoice = await _context.Invoices
+                .Include(i => i.InvoiceLines)
+                .Include(i => i.TaxTotals)
+                .FirstOrDefaultAsync(i => i.Id == id);
+
+            if (invoice == null)
+            {
+                response.IsValid = false;
+                response.Message = $"Invoice with Id {id} was not found.";
+                return response;
+            }
+
+            response.IsValid = true;
+            response.Message = "Invoice retrieved successfully.";
+            response.Invoice = invoice;
+
+            return response;
+        }
+        public async Task<InvoiceOperationResponse> UpdateAsync( int id,Invoices invoice)
+        {
+            var response = new InvoiceOperationResponse();
+
+            if (invoice == null)
+            {
+                response.IsValid = false;
+                response.Errors.Add("Invoice cannot be null.");
+                return response;
+            }
+
+            var existingInvoice = await _context.Invoices
+                .Include(i => i.InvoiceLines)
+                .Include(i => i.TaxTotals)
+                .FirstOrDefaultAsync(i => i.Id == id);
+
+            if (existingInvoice == null)
+            {
+                response.IsValid = false;
+                response.Errors.Add(
+                    $"Invoice with Id {id} was not found.");
+
+                return response;
+            }
+
+            // Use the ID from the route
+            invoice.Id = id;
+
+            // Validate + calculate
+            var validation = ValidateInvoice(invoice);
+
+            if (!validation.IsValid)
+            {
+                response.IsValid = false;
+                response.Errors = validation.Errors;
+
+                return response;
+            }
+
+            // Update Invoice scalar properties
+            _context.Entry(existingInvoice)
+                .CurrentValues
+                .SetValues(invoice);
+
+            // Update Issuer
+            _context.Entry(existingInvoice.Issuer)
+                .CurrentValues
+                .SetValues(invoice.Issuer);
+
+            // Update Issuer Address
+            _context.Entry(existingInvoice.Issuer.Address)
+                .CurrentValues
+                .SetValues(invoice.Issuer.Address);
+
+            // Update Receiver
+            _context.Entry(existingInvoice.Receiver)
+                .CurrentValues
+                .SetValues(invoice.Receiver);
+
+            // Update Receiver Address
+            if (existingInvoice.Receiver.Address != null &&
+                invoice.Receiver.Address != null)
+            {
+                _context.Entry(existingInvoice.Receiver.Address)
+                    .CurrentValues
+                    .SetValues(invoice.Receiver.Address);
+            }
+
+            // Remove old InvoiceLines
+            _context.InvoiceLines.RemoveRange(existingInvoice.InvoiceLines);
+
+            // Remove old TaxTotals
+            _context.TaxTotals.RemoveRange(existingInvoice.TaxTotals);
+
+            // Set FK for new children
+            foreach (var line in invoice.InvoiceLines)
+            {
+                line.InvoiceId = id;
+            }
+
+            foreach (var taxTotal in invoice.TaxTotals)
+            {
+                taxTotal.InvoiceId = id;
+            }
+
+            await _context.SaveChangesAsync();
+
+            // Add new calculated children
+            _context.InvoiceLines.AddRange(invoice.InvoiceLines);
+            _context.TaxTotals.AddRange(invoice.TaxTotals);
+
+            await _context.SaveChangesAsync();
+
+            response.IsValid = true;
+            response.Message = "Invoice updated successfully.";
+
+            var getResponse = await GetByIdAsync(id);
+            response.Invoice = getResponse.Invoice;
+
+            return response;
+        }
+        public async Task<InvoiceOperationResponse> DeleteAsync(int id)
+        {
+            var response = new InvoiceOperationResponse();
+
+            var invoice = await _context.Invoices
+                .FirstOrDefaultAsync(i => i.Id == id);
+
+            if (invoice == null)
+            {
+                response.IsValid = false;
+                response.Message = $"Invoice with Id {id} was not found.";
+                return response;
+            }
+
+            _context.Invoices.Remove(invoice);
+            await _context.SaveChangesAsync();
+
+            response.IsValid = true;
+            response.Message = "Invoice deleted successfully.";
+
+            return response;
         }
     }
 }

@@ -1,0 +1,253 @@
+﻿@using Invoice.Core.Models
+@model Invoices
+
+@{
+    ViewData["Title"] = "Edit Invoice";
+}
+
+<div class="container">
+
+    <main role="main" class="pb-3">
+
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div>
+                <h3 class="text-primary fw-bold mb-1">
+                    Edit Invoice
+                </h3>
+
+                <p class="text-muted mb-0">
+                    Update invoice information and details
+                </p>
+            </div>
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary">
+                ← Back to Invoices
+            </a>
+
+        </div>
+
+
+        <form asp-action="Edit"
+              method="post"
+              id="editInvoiceForm">
+
+            @* Important for Edit *@
+            <input type="hidden"
+                   asp-for="Id" />
+
+
+            <!-- Tabs -->
+
+            <ul class="nav nav-tabs mb-4"
+                id="invoiceTabs"
+                role="tablist">
+
+                <li class="nav-item" role="presentation">
+
+                    <button class="nav-link active"
+                            data-bs-toggle="tab"
+                            data-bs-target="#invoice-info"
+                            type="button">
+
+                        Invoice Info
+
+                    </button>
+
+                </li>
+
+
+                <li class="nav-item" role="presentation">
+
+                    <button class="nav-link"
+                            data-bs-toggle="tab"
+                            data-bs-target="#issuer"
+                            type="button">
+
+                        Issuer
+
+                    </button>
+
+                </li>
+
+
+                <li class="nav-item" role="presentation">
+
+                    <button class="nav-link"
+                            data-bs-toggle="tab"
+                            data-bs-target="#receiver"
+                            type="button">
+
+                        Receiver
+
+                    </button>
+
+                </li>
+
+
+                <li class="nav-item" role="presentation">
+
+                    <button class="nav-link"
+                            data-bs-toggle="tab"
+                            data-bs-target="#lines"
+                            type="button">
+
+                        Invoice Lines
+
+                    </button>
+
+                </li>
+
+            </ul>
+
+
+            <!-- Tab Content -->
+
+            <div class="tab-content">
+
+
+                <!-- Invoice Info -->
+
+                <div class="tab-pane fade show active"
+                     id="invoice-info">
+
+                    <partial name="_InvoiceInfo"
+                             model="Model" />
+
+                </div>
+
+
+                <!-- Issuer -->
+
+                <div class="tab-pane fade"
+                     id="issuer">
+
+                    <partial name="_Issuer"
+                             model="Model" />
+
+                </div>
+
+
+                <!-- Receiver -->
+
+                <div class="tab-pane fade"
+                     id="receiver">
+
+                    <partial name="_Receiver"
+                             model="Model" />
+
+                </div>
+
+
+                <!-- Invoice Lines -->
+
+                <div class="tab-pane fade"
+                     id="lines">
+
+                    <partial name="_InvoiceLine"
+                             model="Model" />
+
+                </div>
+
+            </div>
+
+
+            <!-- Action Buttons -->
+
+            <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+
+                <a asp-action="Index"
+                   class="btn btn-outline-secondary px-4">
+
+                    Cancel
+
+                </a>
+
+
+                <button type="submit"
+                        class="btn btn-primary px-4">
+
+                    Save Changes
+
+                </button>
+
+            </div>
+
+        </form>
+
+
+        <!-- Validation Result -->
+        @if (ViewBag.Result != null)
+        {
+            <div class="mt-4">
+
+                <partial name="_ValidationResult"
+                         model="ViewBag.Result" />
+
+            </div>
+        }
+
+    </main>
+
+</div>
+
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            /*
+             * If validation errors exist,
+             * automatically open the tab containing
+             * the first error.
+             */
+
+            const firstError =
+                document.querySelector(
+                    '.field-validation-error, .input-validation-error'
+                );
+
+
+            if (firstError) {
+
+                const tabPane =
+                    firstError.closest('.tab-pane');
+
+
+                if (tabPane) {
+
+                    const tabId =
+                        tabPane.getAttribute('id');
+
+
+                    const tabButton =
+                        document.querySelector(
+                            `#invoiceTabs button[data-bs-target="#${tabId}"]`
+                        );
+
+
+                    if (tabButton) {
+
+                        const bsTab =
+                            new bootstrap.Tab(tabButton);
+
+                        bsTab.show();
+
+                    }
+
+                }
+
+            }
+
+        });
+
+    </script>
+
+}

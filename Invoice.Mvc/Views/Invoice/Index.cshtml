@@ -1,162 +1,255 @@
-﻿@model Invoice.Core.Models.Invoices
+﻿@model List<Invoice.Core.Models.Invoices>
 
 @{
-    ViewData["Title"] = "Invoice Validation";
+    ViewData["Title"] = "Invoices";
 }
 
-<div class="container">
+<div class="container-fluid mt-4">
 
-    <main role="main" class="pb-3">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-receipt"></i> Invoices
+            </h2>
+            <p class="text-muted mb-0">
+                Manage your invoices
+            </p>
+        </div>
 
-        <header class="mb-4">
-            <h3 class="text-primary">Invoice Validation</h3>
-        </header>
+        <a asp-action="Create" class="btn btn-primary px-4">
+            <i class="bi bi-plus-lg"></i>
+            Create Invoice
+        </a>
+    </div>
 
-        <form asp-action="Index" method="post">
 
-            <!-- Tabs -->
-            <ul class="nav nav-tabs mb-4" id="invoiceTabs" role="tablist">
+    <!-- Success Message -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            @TempData["SuccessMessage"]
 
-                <li class="nav-item">
-                    <button class="nav-link active"
-                            data-bs-toggle="tab"
-                            data-bs-target="#invoice-info"
-                            type="button">
-                        Invoice Info
-                    </button>
-                </li>
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+        </div>
+    }
 
-                <li class="nav-item">
-                    <button class="nav-link"
-                            data-bs-toggle="tab"
-                            data-bs-target="#issuer"
-                            type="button">
-                        Issuer
-                    </button>
-                </li>
 
-                <li class="nav-item">
-                    <button class="nav-link"
-                            data-bs-toggle="tab"
-                            data-bs-target="#receiver"
-                            type="button">
-                        Receiver
-                    </button>
-                </li>
+    <!-- Error Message -->
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            @TempData["ErrorMessage"]
 
-                <li class="nav-item">
-                    <button class="nav-link"
-                            data-bs-toggle="tab"
-                            data-bs-target="#lines"
-                            type="button">
-                        Invoice Lines
-                    </button>
-                </li>
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+        </div>
+    }
 
-             @*    <li class="nav-item">
-                    <button class="nav-link"
-                            data-bs-toggle="tab"
-                            data-bs-target="#totals"
-                            type="button">
-                        Totals
-                    </button>
-                </li> *@
 
-            </ul>
+    <!-- Invoice Table -->
+    <div class="card shadow-sm border-0">
 
-            <!-- Tab Content -->
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 fw-semibold">
+                Invoice List
+            </h5>
+        </div>
 
-            <div class="tab-content">
+        <div class="card-body p-0">
 
-                <!-- Invoice -->
-                <div class="tab-pane fade show active"
-                     id="invoice-info">
+            @if (Model == null || !Model.Any())
+            {
+                <div class="text-center py-5">
 
-                    <partial name="_InvoiceInfo"
-                             model="Model" />
+                    <i class="bi bi-receipt-cutoff"
+                       style="font-size: 3rem; color: #adb5bd;">
+                    </i>
 
-                </div>
+                    <h5 class="mt-3 text-muted">
+                        No invoices found
+                    </h5>
 
-                <!-- Issuer -->
+                    <p class="text-muted">
+                        Create your first invoice to get started.
+                    </p>
 
-                <div class="tab-pane fade"
-                     id="issuer">
-
-                    <partial name="_Issuer"
-                             model="Model" />
-
-                </div>
-
-                <!-- Receiver -->
-
-                <div class="tab-pane fade"
-                     id="receiver">
-
-                    <partial name="_Receiver"
-                             model="Model" />
+                    <a asp-action="Create"
+                       class="btn btn-primary">
+                        <i class="bi bi-plus-lg"></i>
+                        Create Invoice
+                    </a>
 
                 </div>
+            }
+            else
+            {
+                <div class="table-responsive">
 
-                <!-- Invoice Lines -->
+                    <table class="table table-hover align-middle mb-0">
 
-                <div class="tab-pane fade"
-                     id="lines">
+                        <thead class="table-light">
 
-                    <partial name="_InvoiceLine"
-                             model="Model" />
+                            <tr>
+                                <th>#</th>
+                                <th>Internal ID</th>
+                                <th>Issuer</th>
+                                <th>Receiver</th>
+                                <th>Issued Date</th>
+                                <th class="text-end">Net Amount</th>
+                                <th class="text-end">Tax</th>
+                                <th class="text-end">Total</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var invoice in Model)
+                            {
+                                <tr>
+
+                                    <!-- ID -->
+                                    <td class="fw-semibold">
+                                        #@invoice.Id
+                                    </td>
+
+
+                                    <!-- Internal ID -->
+                                    <td>
+                                        <span class="badge bg-light text-dark border">
+                                            @invoice.InternalId
+                                        </span>
+                                    </td>
+
+
+                                    <!-- Issuer -->
+                                    <td>
+                                        @invoice.Issuer?.Name
+                                    </td>
+
+
+                                    <!-- Receiver -->
+                                    <td>
+                                        @invoice.Receiver?.Name
+                                    </td>
+
+
+                                    <!-- Date -->
+                                    <td>
+                                        @invoice.DateTimeIssued.ToLocalTime().ToString("dd MMM yyyy")
+                                        <br />
+
+                                        <small class="text-muted">
+                                            @invoice.DateTimeIssued.ToLocalTime().ToString("hh:mm tt")
+                                        </small>
+                                    </td>
+
+
+                                    <!-- Net Amount -->
+                                    <td class="text-end">
+                                        <strong>
+                                            @invoice.NetAmount.ToString("N2")
+                                        </strong>
+                                        <small class="text-muted">
+                                            EGP
+                                        </small>
+                                    </td>
+
+
+                                    <!-- Tax -->
+                                    <td class="text-end">
+                                        @{
+                                            var taxAmount = invoice.TaxTotals?
+                                            .Sum(x => x.Amount) ?? 0;
+                                        }
+
+                                        @taxAmount.ToString("N2")
+                                        <small class="text-muted">
+                                            EGP
+                                        </small>
+                                    </td>
+
+
+                                    <!-- Total -->
+                                    <td class="text-end">
+
+                                        <strong class="text-success">
+                                            @invoice.TotalAmount.ToString("N2")
+                                        </strong>
+
+                                        <small class="text-muted">
+                                            EGP
+                                        </small>
+
+                                    </td>
+
+
+                                    <!-- Actions -->
+                                    <td class="text-center">
+
+                                        <div class="btn-group" role="group">
+
+                                            <!-- Details -->
+                                            <a asp-action="Details"
+                                               asp-route-id="@invoice.Id"
+                                               class="btn btn-sm btn-outline-info"
+                                               title="Details">
+
+                                                <i class="bi bi-eye"></i>
+
+                                            </a>
+
+
+                                            <!-- Edit -->
+                                            <a asp-action="Edit"
+                                               asp-route-id="@invoice.Id"
+                                               class="btn btn-sm btn-outline-primary"
+                                               title="Edit">
+
+                                                <i class="bi bi-pencil"></i>
+
+                                            </a>
+
+
+                                            <!-- Delete -->
+                                            <a asp-action="Delete"
+                                               asp-route-id="@invoice.Id"
+                                               class="btn btn-sm btn-outline-danger"
+                                               title="Delete">
+
+                                                <i class="bi bi-trash"></i>
+
+                                            </a>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
 
                 </div>
+            }
 
-              
+        </div>
 
-            </div>
-
-            <footer class="d-flex justify-content-end gap-3 mt-4">
-
-                <button type="submit"
-                        class="btn btn-primary px-4">
-
-                    Validate Invoice
-
-                </button>
-
-            </footer>
-
-        </form>
-
-        @if (ViewBag.Result != null)
-        {
-            <hr />
-
-            <partial name="_ValidationResult"
-                     model="ViewBag.Result" />
-        }
-
-    </main>
+    </div>
 
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-
-            const firstError = document.querySelector('.field-validation-error, .input-validation-error');
-            
-            if (firstError) {
-                const tabPane = firstError.closest('.tab-pane');
-                if (tabPane) {
-                    const tabId = tabPane.getAttribute('id');
-                    const tabButton = document.querySelector(`#invoiceTabs button[data-bs-target="#${tabId}"]`);
-                    
-                    if (tabButton) {
-                        const bsTab = new bootstrap.Tab(tabButton);
-                        bsTab.show();
-                    }
-                }
-            }
-        });
-    </script>
+    <partial name="_AlertBoxScript.cshtml" />
 }

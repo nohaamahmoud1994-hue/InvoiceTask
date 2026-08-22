@@ -1,0 +1,832 @@
+<div class="container mt-4" ngSkipHydration>
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+      <h3 class="text-primary fw-bold mb-1">
+        Invoice Details
+      </h3>
+
+      <p class="text-muted mb-0">
+        View invoice information and details
+      </p>
+    </div>
+
+    <div class="d-flex gap-2">
+
+      <button
+        type="button"
+        class="btn btn-outline-primary"
+        [routerLink]="['/invoice/edit', invoice?.id]">
+
+        Edit
+
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        routerLink="/invoice">
+
+        Back to Invoices
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- Loading -->
+  @if (loading) {
+
+    <div class="text-center py-5">
+
+      <div
+        class="spinner-border text-primary"
+        role="status">
+      </div>
+
+      <p class="mt-3 text-muted">
+        Loading invoice...
+      </p>
+
+    </div>
+
+  }
+
+
+  <!-- Error -->
+  @if (!loading && errorMessage) {
+
+    <div class="alert alert-danger">
+
+      {{ errorMessage }}
+
+    </div>
+
+  }
+
+
+  <!-- Invoice -->
+  @if (!loading && !errorMessage && invoice) {
+
+    <!-- Invoice Information -->
+    <div class="card shadow-sm border-0 mb-4">
+
+      <div class="card-header bg-light">
+
+        <h5 class="mb-0 fw-bold text-primary">
+          Invoice Information
+        </h5>
+
+      </div>
+
+      <div class="card-body">
+
+        <div class="row g-4">
+
+          <!-- Document Type -->
+          <div class="col-md-4">
+
+            <label class="text-muted small">
+              Document Type
+            </label>
+
+            <div class="fw-semibold">
+              {{ invoice.documentType }}
+            </div>
+
+          </div>
+
+
+          <!-- Document Type Version -->
+          <div class="col-md-4">
+
+            <label class="text-muted small">
+              Document Type Version
+            </label>
+
+            <div class="fw-semibold">
+              {{ invoice.documentTypeVersion }}
+            </div>
+
+          </div>
+
+
+          <!-- Internal ID -->
+          <div class="col-md-4">
+
+            <label class="text-muted small">
+              Internal ID
+            </label>
+
+            <div class="fw-semibold">
+              {{ invoice.internalId }}
+            </div>
+
+          </div>
+
+
+          <!-- Taxpayer Activity Code -->
+          <div class="col-md-6">
+
+            <label class="text-muted small">
+              Taxpayer Activity Code
+            </label>
+
+            <div class="fw-semibold">
+              {{ invoice.taxpayerActivityCode }}
+            </div>
+
+          </div>
+
+
+          <!-- Date -->
+          <div class="col-md-6">
+
+            <label class="text-muted small">
+              Date Time Issued
+            </label>
+
+            <div class="fw-semibold">
+              {{ invoice.dateTimeIssued | date:'dd/MM/yyyy HH:mm' }}
+            </div>
+
+          </div>
+
+
+          <!-- Purchase Order Reference -->
+          <div
+            class="col-md-6"
+            *ngIf="invoice.purchaseOrderReference">
+
+            <label class="text-muted small">
+              Purchase Order Reference
+            </label>
+
+            <div>
+              {{ invoice.purchaseOrderReference }}
+            </div>
+
+          </div>
+
+
+          <!-- Purchase Order Description -->
+          <div
+            class="col-md-6"
+            *ngIf="invoice.purchaseOrderDescription">
+
+            <label class="text-muted small">
+              Purchase Order Description
+            </label>
+
+            <div>
+              {{ invoice.purchaseOrderDescription }}
+            </div>
+
+          </div>
+
+
+          <!-- Sales Order Reference -->
+          <div
+            class="col-md-6"
+            *ngIf="invoice.salesOrderReference">
+
+            <label class="text-muted small">
+              Sales Order Reference
+            </label>
+
+            <div>
+              {{ invoice.salesOrderReference }}
+            </div>
+
+          </div>
+
+
+          <!-- Sales Order Description -->
+          <div
+            class="col-md-6"
+            *ngIf="invoice.salesOrderDescription">
+
+            <label class="text-muted small">
+              Sales Order Description
+            </label>
+
+            <div>
+              {{ invoice.salesOrderDescription }}
+            </div>
+
+          </div>
+
+
+          <!-- Proforma Invoice Number -->
+          <div
+            class="col-md-6"
+            *ngIf="invoice.proformaInvoiceNumber">
+
+            <label class="text-muted small">
+              Proforma Invoice Number
+            </label>
+
+            <div>
+              {{ invoice.proformaInvoiceNumber }}
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- Issuer & Receiver -->
+    <div class="row g-4 mb-4">
+
+
+      <!-- Issuer -->
+      <div class="col-md-6">
+
+        <div class="card shadow-sm border-0 h-100">
+
+          <div class="card-header bg-light">
+
+            <h5 class="mb-0 fw-bold text-primary">
+              Issuer Information
+            </h5>
+
+          </div>
+
+          <div class="card-body">
+
+            <div class="mb-3">
+
+              <label class="text-muted small">
+                Type
+              </label>
+
+              <div class="fw-semibold">
+                {{ invoice.issuer?.type || '-' }}
+              </div>
+
+            </div>
+
+
+            <div class="mb-3">
+
+              <label class="text-muted small">
+                ID
+              </label>
+
+              <div class="fw-semibold">
+                {{ invoice.issuer?.id || '-' }}
+              </div>
+
+            </div>
+
+
+            <div class="mb-3">
+
+              <label class="text-muted small">
+                Name
+              </label>
+
+              <div class="fw-semibold">
+                {{ invoice.issuer?.name || '-' }}
+              </div>
+
+            </div>
+
+
+            <hr>
+
+
+            <h6 class="text-primary fw-bold mb-3">
+              Address
+            </h6>
+
+
+            <div class="row g-3">
+
+              <div class="col-md-6">
+
+                <label class="text-muted small">
+                  Country
+                </label>
+
+                <div>
+                  {{ invoice.issuer?.address?.country || '-' }}
+                </div>
+
+              </div>
+
+
+              <div class="col-md-6">
+
+                <label class="text-muted small">
+                  Governate
+                </label>
+
+                <div>
+                  {{ invoice.issuer?.address?.governate || '-' }}
+                </div>
+
+              </div>
+
+
+              <div class="col-md-6">
+
+                <label class="text-muted small">
+                  Region / City
+                </label>
+
+                <div>
+                  {{ invoice.issuer?.address?.regionCity || '-' }}
+                </div>
+
+              </div>
+
+
+              <div class="col-md-6">
+
+                <label class="text-muted small">
+                  Street
+                </label>
+
+                <div>
+                  {{ invoice.issuer?.address?.street || '-' }}
+                </div>
+
+              </div>
+
+
+              <div class="col-md-6">
+
+                <label class="text-muted small">
+                  Building Number
+                </label>
+
+                <div>
+                  {{ invoice.issuer?.address?.buildingNumber || '-' }}
+                </div>
+
+              </div>
+
+
+              <div class="col-md-6">
+
+                <label class="text-muted small">
+                  Branch ID
+                </label>
+
+                <div>
+                  {{ invoice.issuer?.address?.branchId || '-' }}
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- Receiver -->
+      <div class="col-md-6">
+
+        <div class="card shadow-sm border-0 h-100">
+
+          <div class="card-header bg-light">
+
+            <h5 class="mb-0 fw-bold text-primary">
+              Receiver Information
+            </h5>
+
+          </div>
+
+          <div class="card-body">
+
+            <div class="mb-3">
+
+              <label class="text-muted small">
+                Type
+              </label>
+
+              <div class="fw-semibold">
+                {{ invoice.receiver?.type || '-' }}
+              </div>
+
+            </div>
+
+
+            <div class="mb-3">
+
+              <label class="text-muted small">
+                ID
+              </label>
+
+              <div class="fw-semibold">
+                {{ invoice.receiver?.id || '-' }}
+              </div>
+
+            </div>
+
+
+            <div class="mb-3">
+
+              <label class="text-muted small">
+                Name
+              </label>
+
+              <div class="fw-semibold">
+                {{ invoice.receiver?.name || '-' }}
+              </div>
+
+            </div>
+
+
+            <hr>
+
+
+            <h6 class="text-primary fw-bold mb-3">
+              Address
+            </h6>
+
+
+            <div class="row g-3">
+
+              <div class="col-md-6">
+
+                <label class="text-muted small">
+                  Country
+                </label>
+
+                <div>
+                  {{ invoice.receiver?.address?.country || '-' }}
+                </div>
+
+              </div>
+
+
+              <div class="col-md-6">
+
+                <label class="text-muted small">
+                  Governate
+                </label>
+
+                <div>
+                  {{ invoice.receiver?.address?.governate || '-' }}
+                </div>
+
+              </div>
+
+
+              <div class="col-md-6">
+
+                <label class="text-muted small">
+                  Region / City
+                </label>
+
+                <div>
+                  {{ invoice.receiver?.address?.regionCity || '-' }}
+                </div>
+
+              </div>
+
+
+              <div class="col-md-6">
+
+                <label class="text-muted small">
+                  Street
+                </label>
+
+                <div>
+                  {{ invoice.receiver?.address?.street || '-' }}
+                </div>
+
+              </div>
+
+
+              <div class="col-md-6">
+
+                <label class="text-muted small">
+                  Building Number
+                </label>
+
+                <div>
+                  {{ invoice.receiver?.address?.buildingNumber || '-' }}
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- Invoice Lines -->
+    <div class="card shadow-sm border-0 mb-4">
+
+      <div
+        class="card-header bg-light d-flex justify-content-between align-items-center">
+
+        <h5 class="mb-0 fw-bold text-primary">
+          Invoice Lines
+        </h5>
+
+        <span class="badge bg-primary">
+
+          {{ invoice.invoiceLines?.length || 0 }}
+
+          Lines
+
+        </span>
+
+      </div>
+
+
+      <div class="card-body p-0">
+
+        @if (invoice.invoiceLines && invoice.invoiceLines.length > 0) {
+
+          <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+              <thead class="table-light">
+
+                <tr>
+
+                  <th>#</th>
+
+                  <th>Description</th>
+
+                  <th>Item Type</th>
+
+                  <th>Item Code</th>
+
+                  <th>Unit Type</th>
+
+                  <th>Quantity</th>
+
+                  <th>Unit Value</th>
+
+                  <th>Discount</th>
+
+                  <th>Sales Total</th>
+
+                  <th>Net Total</th>
+
+                </tr>
+
+              </thead>
+
+
+              <tbody>
+
+                @for (
+                  line of invoice.invoiceLines;
+                  track $index;
+                  let i = $index
+                ) {
+
+                  <tr>
+
+                    <td>
+                      {{ i + 1 }}
+                    </td>
+
+
+                    <td class="fw-semibold">
+                      {{ line.description }}
+                    </td>
+
+
+                    <td>
+
+                      <span class="badge bg-secondary">
+                        {{ line.itemType }}
+                      </span>
+
+                    </td>
+
+
+                    <td>
+                      {{ line.itemCode }}
+                    </td>
+
+
+                    <td>
+                      {{ line.unitType }}
+                    </td>
+
+
+                    <td>
+                      {{ line.quantity | number:'1.2-2' }}
+                    </td>
+
+
+                    <td>
+                      {{ line.unitValue?.amountEGP | number:'1.2-2' }}
+                      EGP
+                    </td>
+
+
+                    <td>
+                      {{ line.discount?.amount || 0 | number:'1.2-2' }}
+                      EGP
+                    </td>
+
+
+                    <td>
+                      {{ line.salesTotal | number:'1.2-2' }}
+                      EGP
+                    </td>
+
+
+                    <td>
+                      {{ line.netTotal | number:'1.2-2' }}
+                      EGP
+                    </td>
+
+                  </tr>
+
+                }
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        } @else {
+
+          <div class="p-4 text-center text-muted">
+
+            No invoice lines found.
+
+          </div>
+
+        }
+
+      </div>
+
+    </div>
+
+
+
+    <!-- Totals -->
+    <div class="row justify-content-end mb-4">
+
+      <div class="col-md-5">
+
+        <div class="card shadow-sm border-0">
+
+          <div class="card-header bg-light">
+
+            <h5 class="mb-0 fw-bold text-primary">
+              Invoice Summary
+            </h5>
+
+          </div>
+
+
+          <div class="card-body">
+
+            <div class="d-flex justify-content-between mb-3">
+
+              <span class="text-muted">
+                Sales Total
+              </span>
+
+              <strong>
+                {{ invoice.totalSalesAmount | number:'1.2-2' }}
+                EGP
+              </strong>
+
+            </div>
+
+
+            <div class="d-flex justify-content-between mb-3">
+
+              <span class="text-muted">
+                Total Discount
+              </span>
+
+              <strong>
+                {{ invoice.totalDiscountAmount | number:'1.2-2' }}
+                EGP
+              </strong>
+
+            </div>
+
+
+            <div class="d-flex justify-content-between mb-3">
+
+              <span class="text-muted">
+                Net Amount
+              </span>
+
+              <strong>
+                {{ invoice.netAmount | number:'1.2-2' }}
+                EGP
+              </strong>
+
+            </div>
+
+
+            <div class="d-flex justify-content-between mb-3">
+
+              <span class="text-muted">
+                Total Taxes
+              </span>
+
+              <strong>
+                {{ getTotalTaxes() | number:'1.2-2' }}
+                EGP
+              </strong>
+
+            </div>
+
+
+            <hr>
+
+
+            <div class="d-flex justify-content-between">
+
+              <span class="fw-bold">
+                Total Amount
+              </span>
+
+              <strong class="text-primary fs-5">
+
+                {{ invoice.totalAmount | number:'1.2-2' }}
+
+                EGP
+
+              </strong>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- Footer Buttons -->
+    <div class="d-flex justify-content-end gap-2 mb-4">
+
+      <button
+        type="button"
+        class="btn btn-primary px-4"
+        [routerLink]="['/invoice/edit', invoice.id]">
+
+        Edit Invoice
+
+      </button>
+
+
+      <button
+        type="button"
+        class="btn btn-outline-danger px-4"
+        [routerLink]="['/invoice/delete', invoice.id]">
+
+        Delete Invoice
+
+      </button>
+
+
+      <button
+        type="button"
+        class="btn btn-outline-secondary px-4"
+        routerLink="/invoice">
+
+        Back
+
+      </button>
+
+    </div>
+
+  }
+
+</div>

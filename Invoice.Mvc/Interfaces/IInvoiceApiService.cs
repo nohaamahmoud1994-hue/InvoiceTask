@@ -5,6 +5,14 @@ namespace Invoice.Mvc.Interfaces
 {
     public interface IInvoiceApiService
     {
-        Task<ValidationResponse?> ValidateInvoiceAsync(Invoices invoice);
+        Task<InvoiceOperationResponse> CreateAsync(Invoices invoice);
+
+        Task<List<Invoices>> GetAllAsync();
+
+        Task<Invoices?> GetByIdAsync(int id);
+
+        Task<InvoiceOperationResponse> UpdateAsync(int id, Invoices invoice);
+
+        Task<InvoiceOperationResponse> DeleteAsync(int id);
     }
 }

@@ -1,0 +1,290 @@
+<div class="container py-4">
+
+  <!-- ================= HEADER ================= -->
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+      <h3 class="text-primary fw-bold mb-1">
+        <i class="bi bi-pencil-square me-2"></i>
+        Edit Invoice
+      </h3>
+
+      <p class="text-muted mb-0">
+        Update invoice information and details
+      </p>
+    </div>
+
+    <a
+      routerLink="/invoice"
+      class="btn btn-outline-secondary">
+
+      <i class="bi bi-arrow-left me-1"></i>
+      Back to Invoices
+
+    </a>
+
+  </div>
+
+
+  <!-- ================= ERROR ================= -->
+
+  @if (errorMessage) {
+
+    <div class="alert alert-danger">
+
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+      {{ errorMessage }}
+
+    </div>
+
+  }
+
+
+  <!-- ================= LOADING ================= -->
+
+  @if (loading && invoiceForm.pristine) {
+
+    <div class="text-center py-5">
+
+      <div
+        class="spinner-border text-primary"
+        role="status">
+
+        <span class="visually-hidden">
+          Loading...
+        </span>
+
+      </div>
+
+      <p class="text-muted mt-3">
+        Loading invoice...
+      </p>
+
+    </div>
+
+  }
+  @else {
+
+    <!-- ================= CARD ================= -->
+
+    <div class="card shadow-sm border-0">
+
+      <div class="card-body p-4">
+
+        <form
+          [formGroup]="invoiceForm"
+          (ngSubmit)="onSubmit()">
+
+
+          <!-- ================= TABS ================= -->
+
+          <ul class="nav nav-tabs mb-4">
+
+            <!-- Invoice Info -->
+
+            <li class="nav-item">
+
+              <button
+                type="button"
+                class="nav-link"
+                [class.active]="activeTab === 'invoice-info'"
+                (click)="activeTab = 'invoice-info'">
+
+                <i class="bi bi-file-text me-1"></i>
+
+                Invoice Info
+
+              </button>
+
+            </li>
+
+
+            <!-- Issuer -->
+
+            <li class="nav-item">
+
+              <button
+                type="button"
+                class="nav-link"
+                [class.active]="activeTab === 'issuer'"
+                (click)="activeTab = 'issuer'">
+
+                <i class="bi bi-building me-1"></i>
+
+                Issuer
+
+              </button>
+
+            </li>
+
+
+            <!-- Receiver -->
+
+            <li class="nav-item">
+
+              <button
+                type="button"
+                class="nav-link"
+                [class.active]="activeTab === 'receiver'"
+                (click)="activeTab = 'receiver'">
+
+                <i class="bi bi-person me-1"></i>
+
+                Receiver
+
+              </button>
+
+            </li>
+
+
+            <!-- Invoice Lines -->
+
+            <li class="nav-item">
+
+              <button
+                type="button"
+                class="nav-link"
+                [class.active]="activeTab === 'lines'"
+                (click)="activeTab = 'lines'">
+
+                <i class="bi bi-list-ul me-1"></i>
+
+                Invoice Lines
+
+              </button>
+
+            </li>
+
+          </ul>
+
+
+          <!-- ================= TAB CONTENT ================= -->
+
+          <div class="tab-content mb-4">
+
+
+            <!-- ================= INVOICE INFO ================= -->
+
+            @if (activeTab === 'invoice-info') {
+
+              <div class="tab-pane active show">
+
+                <app-invoice-info
+                  [form]="invoiceForm">
+                </app-invoice-info>
+
+              </div>
+
+            }
+
+
+            <!-- ================= ISSUER ================= -->
+
+            @if (activeTab === 'issuer') {
+
+              <div class="tab-pane active show">
+
+                <app-issuer
+                  [form]="invoiceForm">
+                </app-issuer>
+
+              </div>
+
+            }
+
+
+            <!-- ================= RECEIVER ================= -->
+
+            @if (activeTab === 'receiver') {
+
+              <div class="tab-pane active show">
+
+                <app-receiver
+                  [form]="invoiceForm">
+                </app-receiver>
+
+              </div>
+
+            }
+
+
+            <!-- ================= INVOICE LINES ================= -->
+
+            @if (activeTab === 'lines') {
+
+              <div class="tab-pane active show">
+
+                <app-invoice-line
+                  [form]="invoiceForm">
+                </app-invoice-line>
+
+              </div>
+
+            }
+
+          </div>
+
+
+          <!-- ================= FOOTER ================= -->
+
+          <div class="border-top pt-4">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+
+              <!-- Cancel -->
+
+              <a
+                routerLink="/invoice"
+                class="btn btn-outline-secondary px-4">
+
+                <i class="bi bi-x-lg me-1"></i>
+
+                Cancel
+
+              </a>
+
+
+              <!-- Save -->
+
+              <button
+                type="submit"
+                class="btn btn-primary px-4"
+                [disabled]="loading">
+
+                @if (loading) {
+
+                  <span
+                    class="spinner-border spinner-border-sm me-2"
+                    role="status">
+                  </span>
+
+                  Saving...
+
+                }
+                @else {
+
+                  <i class="bi bi-check-lg me-1"></i>
+
+                  Save Changes
+
+                }
+
+              </button>
+
+            </div>
+
+          </div>
+
+
+        </form>
+
+      </div>
+
+    </div>
+
+  }
+
+</div>

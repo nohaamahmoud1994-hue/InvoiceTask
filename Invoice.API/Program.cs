@@ -1,6 +1,7 @@
 using Invoice.Core.Interfaces;
 using Invoice.API.Services;
-
+using Invoice.API.Data;
+using Microsoft.EntityFrameworkCore;
 namespace Invoice.API
 {
     public class Program
@@ -30,7 +31,9 @@ namespace Invoice.API
             // Swagger
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
+            builder.Services.AddDbContext<InvoiceDbContext>(options =>
+            options.UseSqlServer(
+            builder.Configuration.GetConnectionString("DefaultConnection")));
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

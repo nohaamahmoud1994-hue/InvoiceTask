@@ -1,44 +1,133 @@
-﻿@model Invoice.Core.Models.Invoices
+﻿@using Invoice.Core.Models
+@model Invoices
 
-<div class="section-header mb-3">
-    <h5 class="text-primary fw-bold">Invoice Information</h5>
+<div class="section-header mb-4">
+
+    <div class="d-flex align-items-center">
+
+        <div class="section-icon me-2">
+            <i class="bi bi-file-earmark-text"></i>
+        </div>
+
+        <div>
+            <h5 class="fw-bold mb-0">Invoice Information</h5>
+            <small class="text-muted">
+                Basic invoice information
+            </small>
+        </div>
+
+    </div>
+
     <hr />
+
 </div>
 
-<div class="row g-3">
 
+<div class="row g-4">
+
+    <!-- Document Type -->
     <div class="col-md-4">
-        <label asp-for="DocumentType" class="form-label"></label>
-        <input asp-for="DocumentType"
-               class="form-control"
-               value="i"
-               readonly />
+
+        <label asp-for="DocumentType"
+               class="form-label fw-semibold">
+        </label>
+
+        <div class="input-group">
+
+            <span class="input-group-text">
+                <i class="bi bi-file-text"></i>
+            </span>
+
+            <input asp-for="DocumentType"
+                   class="form-control"
+                   value="i"
+                   readonly />
+
+        </div>
+
+        <span asp-validation-for="DocumentType"
+              class="text-danger">
+        </span>
+
     </div>
 
+
+    <!-- Document Version -->
     <div class="col-md-4">
-        <label asp-for="DocumentTypeVersion" class="form-label"></label>
-        <input asp-for="DocumentTypeVersion"
-               class="form-control"
-               value="1.0"
-               readonly />
+
+        <label asp-for="DocumentTypeVersion"
+               class="form-label fw-semibold">
+        </label>
+
+        <div class="input-group">
+
+            <span class="input-group-text">
+                <i class="bi bi-tag"></i>
+            </span>
+
+            <input asp-for="DocumentTypeVersion"
+                   class="form-control"
+                   value="1.0"
+                   readonly />
+
+        </div>
+
+        <span asp-validation-for="DocumentTypeVersion"
+              class="text-danger">
+        </span>
+
     </div>
 
+
+    <!-- Taxpayer Activity Code -->
     <div class="col-md-6">
-        <label asp-for="TaxpayerActivityCode" class="form-label"></label>
-        <input asp-for="TaxpayerActivityCode"
-               class="form-control" />
+
+        <label asp-for="TaxpayerActivityCode"
+               class="form-label fw-semibold">
+        </label>
+
+        <div class="input-group">
+
+            <span class="input-group-text">
+                <i class="bi bi-briefcase"></i>
+            </span>
+
+            <input asp-for="TaxpayerActivityCode"
+                   class="form-control"
+                   placeholder="e.g. 6201" />
+
+        </div>
 
         <span asp-validation-for="TaxpayerActivityCode"
-              class="text-danger"></span>
+              class="text-danger">
+        </span>
+
     </div>
 
+
+    <!-- Internal ID -->
     <div class="col-md-6">
-        <label asp-for="InternalId" class="form-label"></label>
-        <input asp-for="InternalId"
-               class="form-control" />
+
+        <label asp-for="InternalId"
+               class="form-label fw-semibold">
+        </label>
+
+        <div class="input-group">
+
+            <span class="input-group-text">
+                <i class="bi bi-hash"></i>
+            </span>
+
+            <input asp-for="InternalId"
+                   class="form-control"
+                   placeholder="e.g. INV-001" />
+
+        </div>
 
         <span asp-validation-for="InternalId"
-              class="text-danger"></span>
+              class="text-danger">
+        </span>
+
     </div>
 
 </div>

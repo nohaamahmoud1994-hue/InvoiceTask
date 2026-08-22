@@ -1,368 +1,528 @@
-﻿@model Invoice.Core.Models.Invoices
+﻿@using Invoice.Core.Models
+@model Invoices
+
 <style>
-        .remove-tax{
+    .invoice-line {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .invoice-line-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .invoice-line-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #0d6efd;
+        margin: 0;
+    }
+
+    .sub-section {
+        background: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 16px;
+        margin-top: 18px;
+    }
+
+    .sub-section-title {
+        color: #0d6efd;
+        font-weight: 600;
+        font-size: 15px;
+        margin-bottom: 15px;
+    }
+
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 6px;
+    }
+
+    .remove-line {
+        min-width: 120px;
+    }
+
+    .remove-tax {
         margin-bottom: 21px;
     }
+
+    .tax-row {
+        background: #f8f9fa;
+        border: 1px solid #e1e1e1;
+        border-radius: 7px;
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+
+    .add-line-btn {
+        min-width: 170px;
+    }
+
+    .add-tax-btn {
+        min-width: 105px;
+    }
+
+    .readonly-field {
+        background-color: #e9ecef;
+        cursor: not-allowed;
+    }
 </style>
-<div class="container mt-4">
 
-    <h3 class="text-primary mb-4">Invoice Lines</h3>
 
-    <div id="invoiceLinesContainer">
+<!-- Section Header -->
+<div class="section-header mb-3">
+    <h5 class="text-primary fw-bold">Invoice Lines</h5>
+    <hr />
+</div>
 
-        @if (Model?.InvoiceLines != null && Model.InvoiceLines.Any())
+
+<div id="invoiceLinesContainer">
+
+    @if (Model?.InvoiceLines != null && Model.InvoiceLines.Any())
+    {
+        for (int i = 0; i < Model.InvoiceLines.Count; i++)
         {
-            for (int i = 0; i < Model.InvoiceLines.Count; i++)
-            {
-                <div class="invoice-line border rounded p-3 mb-4 bg-light">
+            <div class="invoice-line">
 
-                    <!-- Basic Info -->
-                    <div class="row">
+                <!-- Line Header -->
+                <div class="invoice-line-header">
 
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold">Description</label>
+                    <h6 class="invoice-line-title">
+                        <i class="bi bi-receipt me-2"></i>
+                        Invoice Line @(i + 1)
+                    </h6>
 
-                            <input name="InvoiceLines[@i].Description"
-                                   value="@Model.InvoiceLines[i].Description"
-                                   class="form-control"
-                                   required />
-                            <span asp-validation-for="@Model.InvoiceLines[i].Description" class="text-danger"></span>
-                        </div>
+                    <button type="button"
+                            class="btn btn-sm btn-outline-danger remove-line">
 
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label fw-semibold">ItemType</label>
+                        <i class="bi bi-trash me-1"></i>
+                        Remove Line
 
-                            <select name="InvoiceLines[@i].ItemType"
-                                    class="form-select">
+                    </button>
 
-                                <option value="EGS"
-                                        selected="@(Model.InvoiceLines[i].ItemType == "EGS")">
-                                    EGS
-                                </option>
-
-                                <option value="GS1"
-                                        selected="@(Model.InvoiceLines[i].ItemType == "GS1")">
-                                    GS1
-                                </option>
-
-                            </select>
-                        </div>
-
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label fw-semibold">ItemCode</label>
-
-                            <input name="InvoiceLines[@i].ItemCode"
-                                   value="@Model.InvoiceLines[i].ItemCode"
-                                   class="form-control"
-                                   required />
-                            <span asp-validation-for="@Model.InvoiceLines[i].ItemCode" class="text-danger"></span>
-                        </div>
-
-                    </div>
+                </div>
 
 
-                    <!-- Quantity / Unit -->
-                    <div class="row">
+                <!-- Basic Information -->
+                <div class="row g-3">
 
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label fw-semibold">
-                                UnitType
-                            </label>
-
-                            <input name="InvoiceLines[@i].UnitType"
-                                   value="@Model.InvoiceLines[i].UnitType"
-                                   class="form-control"
-                                   required />
-                            <span asp-validation-for="@Model.InvoiceLines[i].UnitType" class="text-danger"></span>
-                        </div>
-
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label fw-semibold">
-                                Quantity
-                            </label>
-
-                            <input name="InvoiceLines[@i].Quantity"
-                                   value="@Model.InvoiceLines[i].Quantity"
-                                   class="form-control quantity"
-                                   type="number"
-                                   step="0.00001"
-                                   min="0"
-                                   required
-                                   oninput="if(this.value < 0) this.value = 0;" />
-                            <span asp-validation-for="@Model.InvoiceLines[i].Quantity" class="text-danger"></span>
-                        </div>
-
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label fw-semibold">
-                                Internal Code (Optional)
-                            </label>
-
-                            <input name="InvoiceLines[@i].InternalCode"
-                                   value="@Model.InvoiceLines[i].InternalCode"
-                                   class="form-control" />
-                        </div>
-
-                    </div>
-
-
-                    <!-- Unit Value -->
-                    <div class="p-3 bg-white border rounded mb-3">
-
-                        <h6 class="text-primary fw-bold mb-3">
-                            Unit Value Details
-                        </h6>
-
-                        <div class="row">
-
-                            <div class="col-md-3 mb-2">
-
-                                <label class="form-label">
-                                    Currency Sold
-                                </label>
-
-                                <input name="InvoiceLines[@i].UnitValue.CurrencySold"
-                                       value="@(Model.InvoiceLines[i].UnitValue?.CurrencySold ?? "EGP")"
-                                       class="form-control currency-sold"
-                                       oninput="toggleCurrencyFields(this)"
-                                       required readonly />
-                                <span asp-validation-for="@Model.InvoiceLines[i].UnitValue.CurrencySold" class="text-danger"></span>
-                            </div>
-
-
-                            <div class="col-md-3 mb-2">
-
-                                <label class="form-label">
-                                    Amount EGP
-                                </label>
-
-                                <input name="InvoiceLines[@i].UnitValue.AmountEGP"
-                                       value="@Model.InvoiceLines[i].UnitValue?.AmountEGP"
-                                       class="form-control amount-egp"
-                                       type="number"
-                                       step="0.00001"
-                                       min="0"
-                                       required
-                                       oninput="if(this.value < 0) this.value = 0;" />
-                                <span asp-validation-for="@Model.InvoiceLines[i].UnitValue.AmountEGP" class="text-danger"></span>
-
-                            </div>
-
-
-                            <div class="col-md-3 mb-2 foreign-field
-                                                @(Model.InvoiceLines[i].UnitValue?.CurrencySold == "EGP"
-                                                                             || string.IsNullOrEmpty(Model.InvoiceLines[i].UnitValue?.CurrencySold)
-                                                                             ? "d-none"
-                                                                             : "")">
-
-                                <label class="form-label">
-                                    Amount Sold
-                                </label>
-
-                                <input name="InvoiceLines[@i].UnitValue.AmountSold"
-                                       value="@Model.InvoiceLines[i].UnitValue?.AmountSold"
-                                       class="form-control"
-                                       type="number"
-                                       step="0.00001"
-                                       oninput="if(this.value < 0) this.value = 0;" />
-                                <span asp-validation-for="@Model.InvoiceLines[i].UnitValue.AmountSold" class="text-danger"></span>
-                            </div>
-
-
-                            <div  class="col-md-3 mb-2 foreign-field
-                                                @(Model.InvoiceLines[i].UnitValue?.CurrencySold == "EGP"
-                                                                             || string.IsNullOrEmpty(Model.InvoiceLines[i].UnitValue?.CurrencySold)
-                                                                             ? "d-none"
-                                                                             : "")">
+                    <div class="col-md-6">
 
                         <label class="form-label">
-                            Exchange Rate
+                            Description
                         </label>
 
-                                <input name="InvoiceLines[@i].UnitValue.CurrencyExchangeRate"
-                                       value="@Model.InvoiceLines[i].UnitValue?.CurrencyExchangeRate"
-                                       class="form-control"
-                                       type="number"
-                                       step="0.00001" />
-                                <span asp-validation-for="@Model.InvoiceLines[i].UnitValue.CurrencyExchangeRate" class="text-danger"></span>
+                        <input name="InvoiceLines[@i].Description"
+                               value="@Model.InvoiceLines[i].Description"
+                               class="form-control"
+                               required />
 
-                            </div>
-
-                        </div>
+                        <span asp-validation-for="@Model.InvoiceLines[i].Description"
+                              class="text-danger"></span>
 
                     </div>
 
 
-                    <!-- Discount -->
-                    <div class="p-3 bg-white border rounded mb-3">
+                    <div class="col-md-3">
 
-                        <h6 class="text-primary fw-bold mb-3">
-                            Line Discount (Optional)
-                        </h6>
+                        <label class="form-label">
+                            Item Type
+                        </label>
 
-                        <div class="row">
+                        <select name="InvoiceLines[@i].ItemType"
+                                class="form-select">
 
-                            <div class="col-md-6 mb-2">
+                            <option value="EGS"
+                                    selected="@(Model.InvoiceLines[i].ItemType == "EGS")">
+                                EGS
+                            </option>
 
-                                <label class="form-label">
-                                    Discount Rate (%)
-                                </label>
+                            <option value="GS1"
+                                    selected="@(Model.InvoiceLines[i].ItemType == "GS1")">
+                                GS1
+                            </option>
 
-                                <input name="InvoiceLines[@i].Discount.Rate"
-                                       value="@Model.InvoiceLines[i].Discount?.Rate"
-                                       class="form-control discount-rate"
-                                       type="number"
-                                       step="0.00001"
-                                       min="0"
-                                       max="100"
-                                       placeholder="Enter discount rate" />
-
-                            </div>
-
-
-                            <div class="col-md-6 mb-2">
-
-                                <label class="form-label">
-                                    Discount Amount
-                                </label>
-
-                                <input name="InvoiceLines[@i].Discount.Amount"
-                                       value="@Model.InvoiceLines[i].Discount?.Amount"
-                                       class="form-control discount-amount"
-                                       type="number"
-                                       step="0.00001"
-                                       readonly />
-
-                                <small class="text-muted">
-                                    Automatically calculated from Discount Rate.
-                                </small>
-
-                            </div>
-
-                        </div>
+                        </select>
 
                     </div>
 
 
-                    <!-- Taxable Items -->
-                    <div class="p-3 bg-white border rounded mb-3">
+                    <div class="col-md-3">
 
-                        <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label class="form-label">
+                            Item Code
+                        </label>
 
-                            <h6 class="text-primary fw-bold mb-0">
-                                Taxable Items (Taxes)
-                            </h6>
+                        <input name="InvoiceLines[@i].ItemCode"
+                               value="@Model.InvoiceLines[i].ItemCode"
+                               class="form-control"
+                               required />
 
-                            <button type="button"
-                                    class="btn btn-sm btn-outline-secondary"
-                                    onclick="addTaxableItem(this, @i)">
-                                + Add Tax
-                            </button>
-
-                        </div>
-
-
-                        <div class="taxes-container">
-
-                    @if (Model.InvoiceLines[i].TaxableItems != null)
-                            {
-                                for (int t = 0;
-                                t < Model.InvoiceLines[i].TaxableItems.Count;
-                                t++)
-                                {
-                                    <div class="row g-3 tax-row">
-
-                                        <!-- Tax Type -->
-                                        <div class="col-md-4">
-                                            <label class="form-label small mb-1">
-                                                Tax Type
-                                            </label>
-
-                                            <select name="InvoiceLines[${currentLineIndex}].TaxableItems[${taxIndex}].TaxType"
-                                                    class="form-select form-select-sm"
-                                                    required>
-                                                <option value="T1">T1 - Value Added Tax (VAT)</option>
-                                                <option value="T2">T2 - Table Tax (Percentage)</option>
-                                                <option value="T3">T3 - Table Tax (Fixed Amount)</option>
-                                                <option value="T4">T4 - Withholding Tax (WHT)</option>
-                                                <option value="T5">T5 - Stamping Tax</option>
-                                                <option value="T6">T6 - Health Insurance Fee</option>
-                                            </select>
-                                        </div>
-
-                                        <!-- Tax Rate -->
-                                        <div class="col-md-3">
-                                            <label class="form-label small mb-1">
-                                                Tax Rate (%)
-                                            </label>
-
-                                            <input name="InvoiceLines[${currentLineIndex}].TaxableItems[${taxIndex}].Rate"
-                                                   type="number"
-                                                   step="0.00001"
-                                                   min="0"
-                                                   max="100"
-                                                   class="form-control form-control-sm tax-rate"
-                                                   placeholder="Rate (%)"
-                                                   required
-                                                   oninput="if(this.value > 100) this.value = 100; if(this.value < 0) this.value = 0;" />
-                                        </div>
-
-                                        <!-- Tax Amount -->
-                                        <div class="col-md-4">
-                                            <label class="form-label small mb-1">
-                                                Tax Amount
-                                            </label>
-
-                                            <input name="InvoiceLines[${currentLineIndex}].TaxableItems[${taxIndex}].Amount"
-                                                   type="number"
-                                                   step="0.00001"
-                                                   min="0"
-                                                   class="form-control form-control-sm tax-amount"
-                                                   placeholder="Amount"
-                                                   readonly />
-
-                                            <small class="text-muted d-block mt-1">
-                                                Automatically calculated.
-                                            </small>
-                                        </div>
-
-                                        <!-- Remove -->
-                                        <div class="col-md-1 d-flex flex-column justify-content-end">
-                                            <button type="button"
-                                                    class="btn btn-sm btn-outline-danger w-100 remove-tax">
-                                                &times;
-                                            </button>
-                                        </div>
-
-                                    </div>
-                                }
-                            }
-
-                        </div>
+                        <span asp-validation-for="@Model.InvoiceLines[i].ItemCode"
+                              class="text-danger"></span>
 
                     </div>
 
 
-                    <!-- Remove Line -->
-                    <div class="text-end">
+                    <div class="col-md-3">
 
-                        <button type="button"
-                                class="btn btn-danger remove-line">
-                            Remove Line
-                        </button>
+                        <label class="form-label">
+                            Unit Type
+                        </label>
+
+                        <input name="InvoiceLines[@i].UnitType"
+                               value="@Model.InvoiceLines[i].UnitType"
+                               class="form-control"
+                               required />
+
+                        <span asp-validation-for="@Model.InvoiceLines[i].UnitType"
+                              class="text-danger"></span>
+
+                    </div>
+
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            Quantity
+                        </label>
+
+                        <input name="InvoiceLines[@i].Quantity"
+                               value="@Model.InvoiceLines[i].Quantity"
+                               class="form-control quantity"
+                               type="number"
+                               step="0.00001"
+                               min="0"
+                               required />
+
+                        <span asp-validation-for="@Model.InvoiceLines[i].Quantity"
+                              class="text-danger"></span>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Internal Code
+                            <span class="text-muted">(Optional)</span>
+                        </label>
+
+                        <input name="InvoiceLines[@i].InternalCode"
+                               value="@Model.InvoiceLines[i].InternalCode"
+                               class="form-control" />
 
                     </div>
 
                 </div>
-            }
+
+
+                <!-- Unit Value -->
+                <div class="sub-section">
+
+                    <h6 class="sub-section-title">
+                        <i class="bi bi-currency-exchange me-2"></i>
+                        Unit Value Details
+                    </h6>
+
+                    <div class="row g-3">
+
+                        <div class="col-md-3">
+
+                            <label class="form-label">
+                                Currency Sold
+                            </label>
+
+                            <input name="InvoiceLines[@i].UnitValue.CurrencySold"
+                                   value="@(Model.InvoiceLines[i].UnitValue?.CurrencySold ?? "EGP")"
+                                   class="form-control readonly-field currency-sold"
+                                   readonly
+                                   required />
+
+                        </div>
+
+
+                        <div class="col-md-3">
+
+                            <label class="form-label">
+                                Amount EGP
+                            </label>
+
+                            <input name="InvoiceLines[@i].UnitValue.AmountEGP"
+                                   value="@Model.InvoiceLines[i].UnitValue?.AmountEGP"
+                                   class="form-control amount-egp"
+                                   type="number"
+                                   step="0.00001"
+                                   min="0"
+                                   required />
+
+                            <span asp-validation-for="@Model.InvoiceLines[i].UnitValue.AmountEGP"
+                                  class="text-danger"></span>
+
+                        </div>
+
+
+                        <div class="col-md-3 foreign-field
+                                    @(Model.InvoiceLines[i].UnitValue?.CurrencySold == "EGP"
+                                                             || string.IsNullOrEmpty(Model.InvoiceLines[i].UnitValue?.CurrencySold)
+                                                             ? "d-none"
+                                                             : "")">
+
+                            <label class="form-label">
+                                Amount Sold
+                            </label>
+
+                            <input name="InvoiceLines[@i].UnitValue.AmountSold"
+                                   value="@Model.InvoiceLines[i].UnitValue?.AmountSold"
+                                   class="form-control"
+                                   type="number"
+                                   step="0.00001"
+                                   min="0" />
+
+                        </div>
+
+
+                        <div class="col-md-3 foreign-field
+                                    @(Model.InvoiceLines[i].UnitValue?.CurrencySold == "EGP"
+                                                             || string.IsNullOrEmpty(Model.InvoiceLines[i].UnitValue?.CurrencySold)
+                                                             ? "d-none"
+                                                             : "")">
+
+                    <label class="form-label">
+                        Exchange Rate
+                    </label>
+
+                            <input name="InvoiceLines[@i].UnitValue.CurrencyExchangeRate"
+                                   value="@Model.InvoiceLines[i].UnitValue?.CurrencyExchangeRate"
+                                   class="form-control"
+                                   type="number"
+                                   step="0.00001" />
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Discount -->
+                <div class="sub-section">
+
+                    <h6 class="sub-section-title">
+                        <i class="bi bi-percent me-2"></i>
+                        Line Discount
+                        <span class="text-muted fw-normal">
+                            (Optional)
+                        </span>
+                    </h6>
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Discount Rate (%)
+                            </label>
+
+                            <input name="InvoiceLines[@i].Discount.Rate"
+                                   value="@Model.InvoiceLines[i].Discount?.Rate"
+                                   class="form-control discount-rate"
+                                   type="number"
+                                   step="0.00001"
+                                   min="0"
+                                   max="100"
+                                   placeholder="Enter discount rate" />
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Discount Amount
+                            </label>
+
+                            <input name="InvoiceLines[@i].Discount.Amount"
+                                   value="@Model.InvoiceLines[i].Discount?.Amount"
+                                   class="form-control discount-amount readonly-field"
+                                   type="number"
+                                   step="0.00001"
+                                   readonly />
+
+                            <small class="text-muted">
+                                Automatically calculated.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Taxes -->
+                <div class="sub-section">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+
+                        <h6 class="sub-section-title mb-0">
+
+                            <i class="bi bi-percent me-2"></i>
+                            Taxable Items
+
+                        </h6>
+
+                        <button type="button"
+                                class="btn btn-sm btn-outline-primary add-tax-btn"
+                                onclick="addTaxableItem(this, @i)">
+
+                            <i class="bi bi-plus-circle me-1"></i>
+                            Add Tax
+
+                        </button>
+
+                    </div>
+
+
+                    <div class="taxes-container">
+
+                @if (Model.InvoiceLines[i].TaxableItems != null)
+                        {
+                            for (int t = 0;
+                            t < Model.InvoiceLines[i].TaxableItems.Count;
+                            t++)
+                            {
+                                <div class="row g-3 tax-row">
+
+                                    <div class="col-md-4">
+
+                                        <label class="form-label small">
+                                            Tax Type
+                                        </label>
+
+                                        <select name="InvoiceLines[@i].TaxableItems[@t].TaxType"
+                                                class="form-select tax-type"
+                                                required>
+
+                                            <option value="T1"
+                                                    selected="@(Model.InvoiceLines[i].TaxableItems[t].TaxType == "T1")">
+                                                T1 - Value Added Tax (VAT)
+                                            </option>
+
+                                            <option value="T2"
+                                                    selected="@(Model.InvoiceLines[i].TaxableItems[t].TaxType == "T2")">
+                                                T2 - Table Tax (Percentage)
+                                            </option>
+
+                                            <option value="T3"
+                                                    selected="@(Model.InvoiceLines[i].TaxableItems[t].TaxType == "T3")">
+                                                T3 - Table Tax (Fixed Amount)
+                                            </option>
+
+                                            <option value="T4"
+                                                    selected="@(Model.InvoiceLines[i].TaxableItems[t].TaxType == "T4")">
+                                                T4 - Withholding Tax (WHT)
+                                            </option>
+
+                                            <option value="T5"
+                                                    selected="@(Model.InvoiceLines[i].TaxableItems[t].TaxType == "T5")">
+                                                T5 - Stamping Tax
+                                            </option>
+
+                                            <option value="T6"
+                                                    selected="@(Model.InvoiceLines[i].TaxableItems[t].TaxType == "T6")">
+                                                T6 - Health Insurance Fee
+                                            </option>
+
+                                        </select>
+
+                                    </div>
+
+
+                                    <div class="col-md-3">
+
+                                        <label class="form-label small">
+                                            Tax Rate (%)
+                                        </label>
+
+                                        <input name="InvoiceLines[@i].TaxableItems[@t].Rate"
+                                               value="@Model.InvoiceLines[i].TaxableItems[t].Rate"
+                                               type="number"
+                                               step="0.00001"
+                                               min="0"
+                                               max="100"
+                                               class="form-control tax-rate"
+                                               required />
+
+                                    </div>
+
+
+                                    <div class="col-md-4">
+
+                                        <label class="form-label small">
+                                            Tax Amount
+                                        </label>
+
+                                        <input name="InvoiceLines[@i].TaxableItems[@t].Amount"
+                                               value="@Model.InvoiceLines[i].TaxableItems[t].Amount"
+                                               type="number"
+                                               step="0.00001"
+                                               min="0"
+                                               class="form-control tax-amount readonly-field"
+                                               readonly />
+
+                                        <small class="text-muted">
+                                            Automatically calculated.
+                                        </small>
+
+                                    </div>
+
+
+                                    <div class="col-md-1 d-flex align-items-end">
+
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-danger w-100 remove-tax"
+                                                title="Remove Tax">
+
+                                            <i class="bi bi-trash"></i>
+
+                                        </button>
+
+                                    </div>
+
+                                </div>
+                            }
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
         }
+    }
 
-    </div>
+</div>
 
+
+<!-- Add Line -->
+<div class="mt-3 mb-4">
 
     <button type="button"
             id="addLineBtn"
-            class="btn btn-outline-primary mb-4">
-        + Add Invoice Line
+            class="btn btn-outline-primary add-line-btn">
+
+        <i class="bi bi-plus-circle me-1"></i>
+        Add Invoice Line
+
     </button>
 
 </div>
@@ -379,23 +539,37 @@
 
     document.getElementById("addLineBtn").addEventListener("click", function () {
 
-        const container =
-            document.getElementById("invoiceLinesContainer");
+        const container = document.getElementById("invoiceLinesContainer");
 
-        const line =
-            document.createElement("div");
+        const line = document.createElement("div");
 
-        line.className =
-            "invoice-line border rounded p-3 mb-4 bg-light";
-
+        line.className = "invoice-line";
 
         line.innerHTML = `
 
-            <div class="row">
+            <div class="invoice-line-header">
 
-                <div class="col-md-6 mb-3">
+                <h6 class="invoice-line-title">
+                    <i class="bi bi-receipt me-2"></i>
+                    Invoice Line
+                </h6>
 
-                    <label class="form-label fw-semibold">
+                <button type="button"
+                        class="btn btn-sm btn-outline-danger remove-line">
+
+                    <i class="bi bi-trash me-1"></i>
+                    Remove Line
+
+                </button>
+
+            </div>
+
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
                         Description
                     </label>
 
@@ -407,33 +581,28 @@
                 </div>
 
 
-                <div class="col-md-3 mb-3">
+                <div class="col-md-3">
 
-                    <label class="form-label fw-semibold">
-                        ItemType
+                    <label class="form-label">
+                        Item Type
                     </label>
 
                     <select
                         name="InvoiceLines[${lineIndex}].ItemType"
                         class="form-select">
 
-                        <option value="EGS">
-                            EGS
-                        </option>
-
-                        <option value="GS1">
-                            GS1
-                        </option>
+                        <option value="EGS">EGS</option>
+                        <option value="GS1">GS1</option>
 
                     </select>
 
                 </div>
 
 
-                <div class="col-md-3 mb-3">
+                <div class="col-md-3">
 
-                    <label class="form-label fw-semibold">
-                        ItemCode
+                    <label class="form-label">
+                        Item Code
                     </label>
 
                     <input
@@ -443,15 +612,11 @@
 
                 </div>
 
-            </div>
 
+                <div class="col-md-3">
 
-            <div class="row">
-
-                <div class="col-md-3 mb-3">
-
-                    <label class="form-label fw-semibold">
-                        UnitType
+                    <label class="form-label">
+                        Unit Type
                     </label>
 
                     <input
@@ -462,9 +627,9 @@
                 </div>
 
 
-                <div class="col-md-3 mb-3">
+                <div class="col-md-3">
 
-                    <label class="form-label fw-semibold">
+                    <label class="form-label">
                         Quantity
                     </label>
 
@@ -475,15 +640,16 @@
                         value="1"
                         min="0"
                         class="form-control quantity"
-                        required
-                        oninput="if(this.value < 0) this.value = 0;" />
+                        required />
+
                 </div>
 
 
-                <div class="col-md-3 mb-3">
+                <div class="col-md-6">
 
-                    <label class="form-label fw-semibold">
-                        Internal Code (Optional)
+                    <label class="form-label">
+                        Internal Code
+                        <span class="text-muted">(Optional)</span>
                     </label>
 
                     <input
@@ -495,17 +661,16 @@
             </div>
 
 
-            <!-- Unit Value -->
+            <div class="sub-section">
 
-            <div class="p-3 bg-white border rounded mb-3">
-
-                <h6 class="text-primary fw-bold mb-3">
+                <h6 class="sub-section-title">
+                    <i class="bi bi-currency-exchange me-2"></i>
                     Unit Value Details
                 </h6>
 
-                <div class="row">
+                <div class="row g-3">
 
-                    <div class="col-md-3 mb-2">
+                    <div class="col-md-3">
 
                         <label class="form-label">
                             Currency Sold
@@ -514,14 +679,14 @@
                         <input
                             name="InvoiceLines[${lineIndex}].UnitValue.CurrencySold"
                             value="EGP"
-                            class="form-control currency-sold"
-                            oninput="toggleCurrencyFields(this)"
-                            required readonly />
+                            class="form-control readonly-field currency-sold"
+                            readonly
+                            required />
 
                     </div>
 
 
-                    <div class="col-md-3 mb-2">
+                    <div class="col-md-3">
 
                         <label class="form-label">
                             Amount EGP
@@ -533,13 +698,12 @@
                             step="0.00001"
                             min="0"
                             class="form-control amount-egp"
-                            required
-                            oninput="if(this.value < 0) this.value = 0;" />
+                            required />
 
                     </div>
 
 
-                    <div class="col-md-3 mb-2 foreign-field d-none">
+                    <div class="col-md-3 foreign-field d-none">
 
                         <label class="form-label">
                             Amount Sold
@@ -549,13 +713,13 @@
                             name="InvoiceLines[${lineIndex}].UnitValue.AmountSold"
                             type="number"
                             step="0.00001"
-                            class="form-control"
-                            oninput="if(this.value < 0) this.value = 0;" />
+                            min="0"
+                            class="form-control" />
 
                     </div>
 
 
-                    <div class="col-md-3 mb-2 foreign-field d-none">
+                    <div class="col-md-3 foreign-field d-none">
 
                         <label class="form-label">
                             Exchange Rate
@@ -574,17 +738,19 @@
             </div>
 
 
-            <!-- Discount -->
+            <div class="sub-section">
 
-            <div class="p-3 bg-white border rounded mb-3">
+                <h6 class="sub-section-title">
 
-                <h6 class="text-primary fw-bold mb-3">
-                    Line Discount (Optional)
+                    <i class="bi bi-percent me-2"></i>
+                    Line Discount
+                    <span class="text-muted fw-normal">(Optional)</span>
+
                 </h6>
 
-                <div class="row">
+                <div class="row g-3">
 
-                    <div class="col-md-6 mb-2">
+                    <div class="col-md-6">
 
                         <label class="form-label">
                             Discount Rate (%)
@@ -597,12 +763,12 @@
                             min="0"
                             max="100"
                             class="form-control discount-rate"
-                            placeholder="Enter discount rate" oninput="if(this.value > 100) this.value = 100; if(this.value < 0) this.value = 0;" />
+                            placeholder="Enter discount rate" />
 
                     </div>
 
 
-                    <div class="col-md-6 mb-2">
+                    <div class="col-md-6">
 
                         <label class="form-label">
                             Discount Amount
@@ -612,7 +778,7 @@
                             name="InvoiceLines[${lineIndex}].Discount.Amount"
                             type="number"
                             step="0.00001"
-                            class="form-control discount-amount"
+                            class="form-control discount-amount readonly-field"
                             readonly />
 
                         <small class="text-muted">
@@ -626,46 +792,34 @@
             </div>
 
 
-            <!-- Taxes -->
+            <div class="sub-section">
 
-            <div class="p-3 bg-white border rounded mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
 
-                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h6 class="sub-section-title mb-0">
 
-                    <h6 class="text-primary fw-bold mb-0">
-                        Taxable Items (Taxes)
+                        <i class="bi bi-percent me-2"></i>
+                        Taxable Items
+
                     </h6>
 
                     <button
                         type="button"
-                        class="btn btn-sm btn-outline-secondary"
+                        class="btn btn-sm btn-outline-primary add-tax-btn"
                         onclick="addTaxableItem(this, ${lineIndex})">
 
-                        + Add Tax
+                        <i class="bi bi-plus-circle me-1"></i>
+                        Add Tax
 
                     </button>
 
                 </div>
 
-
                 <div class="taxes-container"></div>
 
             </div>
 
-
-            <div class="text-end">
-
-                <button
-                    type="button"
-                    class="btn btn-danger remove-line">
-
-                    Remove Line
-
-                </button>
-
-            </div>
         `;
-
 
         container.appendChild(line);
 
@@ -683,32 +837,22 @@
     function calculateDiscount(line) {
 
         const quantity =
-            parseFloat(
-                line.querySelector(".quantity")?.value
-            ) || 0;
+            parseFloat(line.querySelector(".quantity")?.value) || 0;
 
         const amountEGP =
-            parseFloat(
-                line.querySelector(".amount-egp")?.value
-            ) || 0;
+            parseFloat(line.querySelector(".amount-egp")?.value) || 0;
 
         const rate =
-            parseFloat(
-                line.querySelector(".discount-rate")?.value
-            ) || 0;
-
+            parseFloat(line.querySelector(".discount-rate")?.value) || 0;
 
         const salesTotal =
             quantity * amountEGP;
 
-
         const discountAmount =
             salesTotal * rate / 100;
 
-
         const discountInput =
             line.querySelector(".discount-amount");
-
 
         if (discountInput) {
 
@@ -727,56 +871,36 @@
     function calculateTaxes(line) {
 
         const quantity =
-            parseFloat(
-                line.querySelector(".quantity")?.value
-            ) || 0;
+            parseFloat(line.querySelector(".quantity")?.value) || 0;
 
         const amountEGP =
-            parseFloat(
-                line.querySelector(".amount-egp")?.value
-            ) || 0;
+            parseFloat(line.querySelector(".amount-egp")?.value) || 0;
 
         const discountRate =
-            parseFloat(
-                line.querySelector(".discount-rate")?.value
-            ) || 0;
+            parseFloat(line.querySelector(".discount-rate")?.value) || 0;
 
-
-        // Sales Total
         const salesTotal =
             quantity * amountEGP;
 
-
-        // Discount
         const discountAmount =
             salesTotal * discountRate / 100;
 
-
-        // Net Total
         const netTotal =
             salesTotal - discountAmount;
 
-
-        // Calculate every tax
         const taxRows =
             line.querySelectorAll(".tax-row");
-
 
         taxRows.forEach(row => {
 
             const taxRate =
-                parseFloat(
-                    row.querySelector(".tax-rate")?.value
-                ) || 0;
-
+                parseFloat(row.querySelector(".tax-rate")?.value) || 0;
 
             const taxAmount =
                 netTotal * taxRate / 100;
 
-
             const amountInput =
                 row.querySelector(".tax-amount");
-
 
             if (amountInput) {
 
@@ -786,19 +910,6 @@
             }
 
         });
-
-    }
-
-
-    // ==========================================
-    // CALCULATE EVERYTHING
-    // ==========================================
-
-    function calculateLine(line) {
-
-        calculateDiscount(line);
-
-        calculateTaxes(line);
 
     }
 
@@ -814,40 +925,36 @@
                 ".quantity, .amount-egp, .discount-rate"
             );
 
-
         inputs.forEach(input => {
 
             input.addEventListener("input", function () {
 
-                calculateLine(line);
-
-            });
-
-        });
-
-
-        // Tax Rate events
-        const taxRates =
-            line.querySelectorAll(".tax-rate");
-
-
-        taxRates.forEach(input => {
-
-            input.addEventListener("input", function () {
-
+                calculateDiscount(line);
                 calculateTaxes(line);
 
             });
 
         });
 
+        line.querySelectorAll(".tax-rate")
+            .forEach(input => {
 
-        calculateLine(line);
+                input.addEventListener("input", function () {
+
+                    calculateTaxes(line);
+
+                });
+
+            });
+
+        calculateDiscount(line);
+        calculateTaxes(line);
 
     }
 
 
     // Existing lines
+
     document
         .querySelectorAll(".invoice-line")
         .forEach(line => {
@@ -863,23 +970,31 @@
 
     document.addEventListener("click", function (e) {
 
-        if (e.target.classList.contains("remove-line")) {
+        const removeLine =
+            e.target.closest(".remove-line");
 
-            e.target
+        if (removeLine) {
+
+            removeLine
                 .closest(".invoice-line")
                 .remove();
 
             reindexInvoiceLines();
 
+            return;
+
         }
 
 
-        if (e.target.classList.contains("remove-tax")) {
+        const removeTax =
+            e.target.closest(".remove-tax");
+
+        if (removeTax) {
 
             const container =
-                e.target.closest(".taxes-container");
+                removeTax.closest(".taxes-container");
 
-            e.target
+            removeTax
                 .closest(".tax-row")
                 .remove();
 
@@ -904,103 +1019,122 @@
         const line =
             button.closest(".invoice-line");
 
-
         const taxesContainer =
             line.querySelector(".taxes-container");
 
-
         const taxIndex =
-            taxesContainer.children.length;
-
+            taxesContainer.querySelectorAll(".tax-row").length;
 
         const taxHtml = `
 
-              <div class="row g-3 tax-row">
+            <div class="row g-3 tax-row">
 
-        <!-- Tax Type -->
-        <div class="col-md-4">
-            <label class="form-label small mb-1">
-                Tax Type
-            </label>
+                <div class="col-md-4">
 
-               <select
-        name="InvoiceLines[${currentLineIndex}].TaxableItems[${taxIndex}].TaxType"
-        class="form-select form-select-sm"
-        required>
-        <option value="T1">T1 - Value Added Tax (VAT)</option>
-        <option value="T2">T2 - Table Tax (Percentage)</option>
-        <option value="T3">T3 - Table Tax (Fixed Amount)</option>
-        <option value="T4">T4 - Withholding Tax (WHT)</option>
-        <option value="T5">T5 - Stamping Tax</option>
-        <option value="T6">T6 - Health Insurance Fee</option>
-    </select>
-        </div>
+                    <label class="form-label small">
+                        Tax Type
+                    </label>
 
-        <!-- Tax Rate -->
-        <div class="col-md-3">
-            <label class="form-label small mb-1">
-                Tax Rate (%)
-            </label>
+                    <select
+                        name="InvoiceLines[${currentLineIndex}].TaxableItems[${taxIndex}].TaxType"
+                        class="form-select tax-type"
+                        required>
 
-            <input
-                name="InvoiceLines[${currentLineIndex}].TaxableItems[${taxIndex}].Rate"
-                type="number"
-                step="0.00001"
-                min="0"
-                max="100"
-                class="form-control form-control-sm tax-rate"
-                placeholder="Rate (%)"
-                required
-                oninput="if(this.value > 100) this.value = 100; if(this.value < 0) this.value = 0;" />
-        </div>
+                        <option value="T1">
+                            T1 - Value Added Tax (VAT)
+                        </option>
 
-        <!-- Tax Amount -->
-        <div class="col-md-4">
-            <label class="form-label small mb-1">
-                Tax Amount
-            </label>
+                        <option value="T2">
+                            T2 - Table Tax (Percentage)
+                        </option>
 
-            <input
-                name="InvoiceLines[${currentLineIndex}].TaxableItems[${taxIndex}].Amount"
-                type="number"
-                step="0.00001"
-                min="0"
-                class="form-control form-control-sm tax-amount"
-                placeholder="Amount"
-                readonly />
+                        <option value="T3">
+                            T3 - Table Tax (Fixed Amount)
+                        </option>
 
-            <small class="text-muted d-block mt-1">
-                Automatically calculated.
-            </small>
-        </div>
+                        <option value="T4">
+                            T4 - Withholding Tax (WHT)
+                        </option>
 
-        <!-- Remove -->
-            <div class="col-md-1 d-flex flex-column justify-content-end">
-        <button
-            type="button"
-            class="btn btn-sm btn-outline-danger w-100 remove-tax">
-            &times;
-        </button>
-    </div>
+                        <option value="T5">
+                            T5 - Stamping Tax
+                        </option>
 
-    </div>
+                        <option value="T6">
+                            T6 - Health Insurance Fee
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <label class="form-label small">
+                        Tax Rate (%)
+                    </label>
+
+                    <input
+                        name="InvoiceLines[${currentLineIndex}].TaxableItems[${taxIndex}].Rate"
+                        type="number"
+                        step="0.00001"
+                        min="0"
+                        max="100"
+                        class="form-control tax-rate"
+                        required />
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <label class="form-label small">
+                        Tax Amount
+                    </label>
+
+                    <input
+                        name="InvoiceLines[${currentLineIndex}].TaxableItems[${taxIndex}].Amount"
+                        type="number"
+                        step="0.00001"
+                        min="0"
+                        class="form-control tax-amount readonly-field"
+                        readonly />
+
+                    <small class="text-muted">
+                        Automatically calculated.
+                    </small>
+
+                </div>
+
+
+                <div class="col-md-1 d-flex align-items-end">
+
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-outline-danger w-100 remove-tax"
+                        title="Remove Tax">
+
+                        <i class="bi bi-trash"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
         `;
-
 
         taxesContainer.insertAdjacentHTML(
             "beforeend",
             taxHtml
         );
 
-
-        // Attach event to new tax rate
         const newTaxRow =
             taxesContainer.lastElementChild;
 
-
         const taxRateInput =
             newTaxRow.querySelector(".tax-rate");
-
 
         taxRateInput.addEventListener(
             "input",
@@ -1011,51 +1145,7 @@
             }
         );
 
-
         calculateTaxes(line);
-
-    }
-
-
-    // ==========================================
-    // CURRENCY
-    // ==========================================
-
-    function toggleCurrencyFields(input) {
-
-        const lineCard =
-            input.closest(".invoice-line");
-
-
-        const foreignFields =
-            lineCard.querySelectorAll(".foreign-field");
-
-
-        if (
-            input.value.trim().toUpperCase() !== "EGP" &&
-            input.value.trim() !== ""
-        ) {
-
-            foreignFields.forEach(el => {
-
-                el.classList.remove("d-none");
-
-            });
-
-        }
-        else {
-
-            foreignFields.forEach(el => {
-
-                el.classList.add("d-none");
-
-                el
-                    .querySelectorAll("input")
-                    .forEach(i => i.value = "");
-
-            });
-
-        }
 
     }
 
@@ -1070,7 +1160,6 @@
             document.querySelectorAll(
                 "#invoiceLinesContainer .invoice-line"
             );
-
 
         lines.forEach((line, newIdx) => {
 
@@ -1092,10 +1181,7 @@
 
 
             const addTaxBtn =
-                line.querySelector(
-                    "button[onclick*='addTaxableItem']"
-                );
-
+                line.querySelector(".add-tax-btn");
 
             if (addTaxBtn) {
 
@@ -1107,7 +1193,6 @@
             }
 
         });
-
 
         lineIndex = lines.length;
 
@@ -1123,11 +1208,10 @@
         const rows =
             container.querySelectorAll(".tax-row");
 
-
         rows.forEach((row, newTaxIdx) => {
 
             row
-                .querySelectorAll("input")
+                .querySelectorAll("input, select")
                 .forEach(input => {
 
                     if (input.name) {

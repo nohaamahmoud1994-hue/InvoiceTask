@@ -2,6 +2,7 @@
 {
     public class Invoices
     {
+        public int Id { get; set; }
         public Issuer Issuer { get; set; } = new();
 
         public Receiver Receiver { get; set; } = new();
