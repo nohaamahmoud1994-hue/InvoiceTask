@@ -1,6 +1,8 @@
-using Invoice.Core.Interfaces;
-using Invoice.API.Services;
+using FluentValidation;
 using Invoice.API.Data;
+using Invoice.API.Services;
+using Invoice.API.Validators;
+using Invoice.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 namespace Invoice.API
 {
@@ -12,7 +14,7 @@ namespace Invoice.API
 
             // Add services to the container.
             builder.Services.AddControllers();
-
+            builder.Services.AddValidatorsFromAssemblyContaining<InvoiceValidator>();
             // CORS
             builder.Services.AddCors(options =>
             {
