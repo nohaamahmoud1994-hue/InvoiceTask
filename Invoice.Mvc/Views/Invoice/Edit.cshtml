@@ -30,11 +30,28 @@
         </div>
 
 
+        <!-- Validation Errors -->
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger mb-4">
+
+                <h6 class="fw-bold mb-2">
+                    Invoice validation failed
+                </h6>
+
+                <div asp-validation-summary="All"
+                     class="mb-0">
+                </div>
+
+            </div>
+        }
+
+
         <form asp-action="Edit"
               method="post"
               id="editInvoiceForm">
 
-            @* Important for Edit *@
+            <!-- Important for Edit -->
             <input type="hidden"
                    asp-for="Id" />
 
@@ -45,7 +62,10 @@
                 id="invoiceTabs"
                 role="tablist">
 
-                <li class="nav-item" role="presentation">
+                <!-- Invoice Info -->
+
+                <li class="nav-item"
+                    role="presentation">
 
                     <button class="nav-link active"
                             data-bs-toggle="tab"
@@ -59,7 +79,10 @@
                 </li>
 
 
-                <li class="nav-item" role="presentation">
+                <!-- Issuer -->
+
+                <li class="nav-item"
+                    role="presentation">
 
                     <button class="nav-link"
                             data-bs-toggle="tab"
@@ -73,7 +96,10 @@
                 </li>
 
 
-                <li class="nav-item" role="presentation">
+                <!-- Receiver -->
+
+                <li class="nav-item"
+                    role="presentation">
 
                     <button class="nav-link"
                             data-bs-toggle="tab"
@@ -87,7 +113,10 @@
                 </li>
 
 
-                <li class="nav-item" role="presentation">
+                <!-- Invoice Lines -->
+
+                <li class="nav-item"
+                    role="presentation">
 
                     <button class="nav-link"
                             data-bs-toggle="tab"
@@ -177,18 +206,6 @@
 
         </form>
 
-
-        <!-- Validation Result -->
-        @if (ViewBag.Result != null)
-        {
-            <div class="mt-4">
-
-                <partial name="_ValidationResult"
-                         model="ViewBag.Result" />
-
-            </div>
-        }
-
     </main>
 
 </div>
@@ -198,51 +215,100 @@
 
     <partial name="_ValidationScriptsPartial" />
 
-
     <script>
 
         document.addEventListener("DOMContentLoaded", function () {
 
             /*
-             * If validation errors exist,
-             * automatically open the tab containing
-             * the first error.
+             * Find validation summary
              */
 
-            const firstError =
+            const validationSummary =
                 document.querySelector(
-                    '.field-validation-error, .input-validation-error'
+                    '[data-valmsg-summary="true"]'
                 );
 
 
-            if (firstError) {
-
-                const tabPane =
-                    firstError.closest('.tab-pane');
-
-
-                if (tabPane) {
-
-                    const tabId =
-                        tabPane.getAttribute('id');
+            if (!validationSummary) {
+                return;
+            }
 
 
-                    const tabButton =
-                        document.querySelector(
-                            `#invoiceTabs button[data-bs-target="#${tabId}"]`
-                        );
+            /*
+             * Get validation error text
+             */
+
+            const errorText =
+                validationSummary.innerText.toLowerCase();
 
 
-                    if (tabButton) {
+            /*
+             * Determine which tab contains
+             * the validation error
+             */
 
-                        const bsTab =
-                            new bootstrap.Tab(tabButton);
+            let targetTab = "invoice-info";
 
-                        bsTab.show();
 
-                    }
+            // Issuer errors
 
-                }
+            if (
+                errorText.includes("issuer")
+            ) {
+
+                targetTab = "issuer";
+
+            }
+
+
+            // Receiver errors
+
+            else if (
+                errorText.includes("receiver")
+            ) {
+
+                targetTab = "receiver";
+
+            }
+
+
+            // Invoice line errors
+
+            else if (
+                errorText.includes("invoice line") ||
+                errorText.includes("quantity") ||
+                errorText.includes("itemcode") ||
+                errorText.includes("itemtype") ||
+                errorText.includes("unitvalue") ||
+                errorText.includes("currency") ||
+                errorText.includes("discount") ||
+                errorText.includes("taxableitem") ||
+                errorText.includes("taxtype") ||
+                errorText.includes("tax amount") ||
+                errorText.includes("tax rate")
+            ) {
+
+                targetTab = "lines";
+
+            }
+
+
+            /*
+             * Activate the required tab
+             */
+
+            const tabButton =
+                document.querySelector(
+                    `#invoiceTabs button[data-bs-target="#${targetTab}"]`
+                );
+
+
+            if (tabButton) {
+
+                const bsTab =
+                    new bootstrap.Tab(tabButton);
+
+                bsTab.show();
 
             }
 

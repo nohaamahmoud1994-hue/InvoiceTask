@@ -37,7 +37,6 @@ namespace Invoice.Mvc.Controllers
 
         // POST: /Invoice/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Invoices invoice)
         {
             invoice.InvoiceLines ??= new();
@@ -127,8 +126,7 @@ namespace Invoice.Mvc.Controllers
 
             try
             {
-                var result =
-                    await _invoiceApiService.UpdateAsync(id, invoice);
+                var result =await _invoiceApiService.UpdateAsync(id, invoice);
 
                 if (!result.IsValid)
                 {
@@ -174,7 +172,6 @@ namespace Invoice.Mvc.Controllers
         // POST: /Invoice/Delete/5
         [HttpPost]
         [ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try
